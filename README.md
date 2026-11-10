@@ -10,7 +10,7 @@ export ADMIN_PASSWORD
 python3 server.py --bind 0.0.0.0 --port 8000
 ```
 
-Trang bán hàng ở `/`, trang quản trị ở `/admin.html`. Đăng nhập bằng mật khẩu đã đặt trong `ADMIN_PASSWORD`. Không lưu mật khẩu trong Git. Mật khẩu dùng chung cho quản trị viên; phiên đăng nhập hết hạn sau 8 giờ và khi khởi động lại máy chủ.
+Trang bán hàng ở `/`, trang quản trị ở `/admin.html`. Tên đăng nhập mặc định là `admin` (đổi qua `ADMIN_USERNAME`). Đăng nhập bằng mật khẩu đã đặt trong `ADMIN_PASSWORD`. Nếu không đặt biến mật khẩu, máy chủ đọc tài khoản từ tệp JSON riêng `../.web-ban-hang/admin.json` hoặc đường dẫn `ADMIN_CREDENTIAL_FILE`, gồm hai trường `username` và `password`. Giới hạn quyền tệp này về `600` và không đưa vào Git. Không lưu mật khẩu trong Git. Mật khẩu dùng chung cho quản trị viên; phiên đăng nhập hết hạn sau 8 giờ và khi khởi động lại máy chủ.
 
 Trang quản trị hỗ trợ tìm kiếm, lọc dịch vụ/trạng thái, thêm, sửa, ẩn và xóa gói. Tất cả nhóm dịch vụ và thiết bị Tendoo dùng chung danh mục. Mỗi lần mở bảng giá, website lấy dữ liệu mới từ máy chủ; form đăng ký sử dụng tên, giá và chi tiết của gói đã chọn. Thay đổi được lưu nguyên tử, có kiểm tra xung đột giữa các phiên quản trị.
 

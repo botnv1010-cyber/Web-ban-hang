@@ -58,6 +58,7 @@ class CatalogTest(unittest.TestCase):
     def test_auth_and_logout(self):
         self.assertEqual(self.request('POST', '/api/login', {'password':'incorrect'})[0], 401)
         self.assertEqual(self.request('POST', '/api/plans', {})[0], 401)
+        self.assertEqual(self.request('POST', '/api/login', {'username':'wrong','password':self.password})[0], 401)
         headers = self.login()
         self.assertEqual(self.request('GET', '/api/session', headers=headers)[0], 200)
         self.assertEqual(self.request('POST', '/api/plans', {}, {'Cookie':headers['Cookie']})[0], 403)

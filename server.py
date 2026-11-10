@@ -19,7 +19,13 @@ CATEGORIES = {'tendoo', 'devices', 'ca', 'invoice', 'bh', 'contract'}
 SESSIONS = {}
 ATTEMPTS = {}
 LOCK = threading.Lock()
-PASSWORD = os.environ.get('ADMIN_PASSWORD', '')
+CREDENTIAL_FILE = Path(os.environ.get('ADMIN_CREDENTIAL_FILE', str(ROOT.parent / '.web-ban-hang' / 'admin.json')))
+# Environment configuration takes precedence over the private local account file.
+ACCOUNT = {}
+if not os.environ.get('ADMIN_PASSWORD') and CREDENTIAL_FILE.is_file():
+    ACCOUNT = json.loads(CREDENTIAL_FILE.read_text())
+USERNAME = os.environ.get('ADMIN_USERNAME', ACCOUNT.get('username', 'admin'))
+PASSWORD = os.environ.get('ADMIN_PASSWORD', ACCOUNT.get('password', ''))
 PASSWORD_DIGEST = hashlib.sha256(PASSWORD.encode()).digest()
 
 
@@ -134,8 +140,9 @@ class Handler(SimpleHTTPRequestHandler):
                 self.reply(429, {'error': 'Thử quá nhiều lần. Vui lòng đợi 5 phút.'})
                 return
             supplied = data.get('password', '')
-            if not isinstance(supplied, str) or not hmac.compare_digest(hashlib.sha256(supplied.encode()).digest(), PASSWORD_DIGEST):
-                self.reply(401, {'error': 'Mật khẩu không đúng.'})
+            username = data.get('username', 'admin')
+            if not isinstance(username, str) or not hmac.compare_digest(username.encode(), USERNAME.encode()) or not isinstance(supplied, str) or not hmac.compare_digest(hashlib.sha256(supplied.encode()).digest(), PASSWORD_DIGEST):
+                self.reply(401, {'error': 'Tên đăng nhập hoặc mật khẩu không đúng.'})
                 return
             token, csrf = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
             with LOCK:
