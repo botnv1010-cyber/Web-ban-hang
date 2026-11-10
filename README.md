@@ -18,7 +18,7 @@ SQLite lưu mặc định ở `../.web-ban-hang/catalog.sqlite3`, ngoài thư m�
 
 Để đưa lên Internet, triển khai tiến trình Python sau reverse proxy HTTPS, đặt `COOKIE_SECURE=1`, cung cấp `ADMIN_PASSWORD` qua cấu hình bảo mật và gắn ổ lưu trữ cho SQLite. Đây là ứng dụng máy chủ; GitHub Pages chỉ phục vụ giao diện tĩnh và **không hỗ trợ đăng nhập/lưu quản trị**. Khi chỉ phục vụ tĩnh, bảng giá dùng dữ liệu ban đầu từ JSON.
 
-Không gửi form thật khi kiểm thử: FormSubmit gửi thông tin đến email tư vấn đã có trong website. Video và dịch vụ email phụ thuộc nhà cung cấp bên ngoài.
+Không gửi form thật khi kiểm thử: đăng ký sử dụng API email Resend ở phía máy chủ. Video và dịch vụ email phụ thuộc nhà cung cấp bên ngoài.
 
 ## Kiểm thử
 
@@ -43,3 +43,17 @@ Kho mã có `vercel.json`, hàm Python `api/index.py` và bước build chỉ xu
 4. Mở `/api/session`: nếu chưa đăng nhập, phản hồi đúng là HTTP 401 kèm JSON. Nếu nhận JSON 503, kiểm tra biến môi trường, kết nối cơ sở dữ liệu và Functions logs. Sau đó đăng nhập ở `/admin.html`, sửa thử một gói rồi xem lại bảng giá trên website.
 
 Ứng dụng tự tạo các bảng cần thiết và nạp 111 gói ban đầu khi cơ sở dữ liệu còn trống. Catalog, phiên đăng nhập và bộ đếm giới hạn đăng nhập đều lưu trong PostgreSQL dùng chung giữa các Functions. Đổi mật khẩu/tên đăng nhập sẽ vô hiệu hóa các phiên cũ. Không dùng cùng cơ sở dữ liệu Production cho Preview nếu không muốn bản Preview thay đổi bảng giá thật.
+
+## Email thông báo khi khách đăng ký
+
+Form tư vấn và form chọn gói gửi đến `/api/registrations`. Máy chủ kiểm tra thông tin liên hệ, đồng ý liên hệ và gói đang hiển thị; lấy tên, giá, thời hạn và chi tiết gói trực tiếp từ database rồi gửi email thông báo cho bộ phận tư vấn. Khách chưa nhận email xác nhận riêng.
+
+Trong Resend, xác minh tên miền gửi email bằng các bản ghi DNS theo hướng dẫn dịch vụ, rồi tạo API key cho phép gửi email. Trong Vercel → Settings → Environment Variables (Production), thêm:
+
+- `RESEND_API_KEY` — Secret, API key Resend.
+- `MAIL_FROM` — địa chỉ gửi thuộc tên miền đã xác minh, ví dụ `Viettel Đồng Nai <thongbao@tenmien-cua-ban.vn>`; thay bằng địa chỉ thật. Không sử dụng địa chỉ Gmail làm người gửi khi tên miền đó không thuộc quyền quản lý của bạn.
+- `MAIL_TO` — địa chỉ nhận thông báo; mặc định `botnv1010@gmail.com`, thay nếu cần.
+
+Chọn Redeploy sau khi thêm các biến. Cần giữ các biến PostgreSQL và tài khoản quản trị đã cấu hình. Các key và thông tin xác thực chỉ nằm phía máy chủ, không đưa vào Git hoặc mã JavaScript.
+
+Luồng gửi dùng reply-to là email của khách để tư vấn viên trả lời trực tiếp. Chỉ hiển thị thành công khi nhà cung cấp email xác nhận đã nhận yêu cầu; điều này chưa bảo đảm thư đến hộp thư chính. Kiểm tra trạng thái thư trong Resend nếu thư không đến. Khi dịch vụ lỗi hoặc chưa cấu hình, form báo lỗi và không hiện thông báo thành công. Giới hạn 5 yêu cầu hợp lệ mỗi IP trong 5 phút và dùng khóa idempotency của nhà cung cấp để tránh gửi trùng khi thử lại cùng đăng ký (theo thời hạn của Resend).

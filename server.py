@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import json
 import os
+import mailer
 from pathlib import Path
 import secrets
 import sqlite3
@@ -169,6 +170,29 @@ class Handler(SimpleHTTPRequestHandler):
             self.reply(400, {'error': str(e)})
             return
         path = urlsplit(self.path).path
+        if path == '/api/registrations':
+            if data.get('website'):
+                self.reply(400, {'error': 'Thông tin đăng ký không hợp lệ.'})
+                return
+            try:
+                with connect() as db:
+                    row = db.execute('SELECT body FROM catalog WHERE id=1').fetchone()
+                item = mailer.registration(data, json.loads(row[0]))
+                now = time.time()
+                ip = 'registration:' + self.client_address[0]
+                with connect() as db:
+                    db.execute('DELETE FROM login_attempts WHERE started < ?', (now - 300,))
+                    count = db.execute('INSERT INTO login_attempts (ip, started, attempts) VALUES (?, ?, 1) ON CONFLICT (ip) DO UPDATE SET attempts=login_attempts.attempts+1 RETURNING attempts', (ip, now)).fetchone()[0]
+                if count > 5:
+                    self.reply(429, {'error': 'Bạn đã gửi nhiều đăng ký. Vui lòng thử lại sau 5 phút.'})
+                    return
+                mailer.send_registration_email(item)
+                self.reply(200, {'success': True, 'requestId': item['request_id']})
+            except ValueError as error:
+                self.reply(400, {'error': str(error)})
+            except mailer.MailError as error:
+                self.reply(503, {'error': str(error)})
+            return
         if path == '/api/login':
             ip = self.client_address[0]
             now = time.time()
