@@ -7,7 +7,6 @@ import os
 from pathlib import Path
 import secrets
 import sqlite3
-import threading
 import time
 from http.cookies import SimpleCookie
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -16,9 +15,7 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parent
 DB = Path(os.environ.get('CATALOG_DB', str(ROOT.parent / '.web-ban-hang' / 'catalog.sqlite3')))
 CATEGORIES = {'tendoo', 'devices', 'ca', 'invoice', 'bh', 'contract'}
-SESSIONS = {}
-ATTEMPTS = {}
-LOCK = threading.Lock()
+DATABASE_URL = os.environ.get('DATABASE_URL') or os.environ.get('POSTGRES_URL')
 CREDENTIAL_FILE = Path(os.environ.get('ADMIN_CREDENTIAL_FILE', str(ROOT.parent / '.web-ban-hang' / 'admin.json')))
 # Environment configuration takes precedence over the private local account file.
 ACCOUNT = {}
@@ -29,8 +26,51 @@ PASSWORD = os.environ.get('ADMIN_PASSWORD', ACCOUNT.get('password', ''))
 PASSWORD_DIGEST = hashlib.sha256(PASSWORD.encode()).digest()
 
 
+class Database:
+    """Same SQL operations for local SQLite and hosted PostgreSQL."""
+    def __enter__(self):
+        if DATABASE_URL:
+            import psycopg
+            self.conn = psycopg.connect(DATABASE_URL, connect_timeout=10)
+        else:
+            self.conn = sqlite3.connect(DB)
+        return self
+
+    def execute(self, sql, params=()):
+        if DATABASE_URL:
+            sql = sql.replace('?', '%s')
+        return self.conn.execute(sql, params)
+
+    def __exit__(self, kind, value, traceback):
+        try:
+            if kind is None:
+                self.conn.commit()
+            else:
+                self.conn.rollback()
+        finally:
+            self.conn.close()
+
+
 def connect():
-    return sqlite3.connect(DB)
+    return Database()
+
+
+def initialize():
+    if not DATABASE_URL:
+        DB.parent.mkdir(parents=True, exist_ok=True)
+    with connect() as db:
+        db.execute('CREATE TABLE IF NOT EXISTS catalog (id INTEGER PRIMARY KEY, body TEXT NOT NULL, version INTEGER NOT NULL)')
+        db.execute('CREATE TABLE IF NOT EXISTS admin_sessions (token TEXT PRIMARY KEY, csrf TEXT NOT NULL, expires DOUBLE PRECISION NOT NULL, identity TEXT NOT NULL)')
+        db.execute('CREATE TABLE IF NOT EXISTS login_attempts (ip TEXT PRIMARY KEY, started DOUBLE PRECISION NOT NULL, attempts INTEGER NOT NULL)')
+        seed = json.dumps(validate(json.loads((ROOT / 'data/plans.json').read_text())))
+        db.execute('INSERT INTO catalog VALUES (1, ?, 1) ON CONFLICT (id) DO NOTHING', (seed,))
+    if not DATABASE_URL:
+        os.chmod(DB, 0o600)
+
+
+def session_identity():
+    # Changing either credential revokes sessions across all server instances.
+    return hmac.new(PASSWORD_DIGEST, USERNAME.encode(), hashlib.sha256).hexdigest()
 
 
 def validate(plans):
@@ -78,11 +118,12 @@ class Handler(SimpleHTTPRequestHandler):
             token = cookie['catalog_session'].value
         except (KeyError, ValueError):
             return None
-        with LOCK:
-            for key in list(SESSIONS):
-                if SESSIONS[key]['expires'] < time.time():
-                    del SESSIONS[key]
-            return SESSIONS.get(token)
+        with connect() as db:
+            db.execute('DELETE FROM admin_sessions WHERE expires < ?', (time.time(),))
+            row = db.execute('SELECT csrf, expires, identity FROM admin_sessions WHERE token=?', (hashlib.sha256(token.encode()).hexdigest(),)).fetchone()
+        if row and hmac.compare_digest(row[2], session_identity()):
+            return {'csrf': row[0], 'expires': row[1]}
+        return None
 
     def do_GET(self):
         path = urlsplit(self.path).path
@@ -131,11 +172,11 @@ class Handler(SimpleHTTPRequestHandler):
         if path == '/api/login':
             ip = self.client_address[0]
             now = time.time()
-            with LOCK:
-                recent = [t for t in ATTEMPTS.get(ip, []) if t > now - 300]
-                ATTEMPTS[ip] = recent
-                limited = len(recent) >= 10
-                recent.append(now)
+            # One atomic upsert keeps throttling shared across serverless instances.
+            with connect() as db:
+                db.execute('DELETE FROM login_attempts WHERE started < ?', (now - 300,))
+                count = db.execute('INSERT INTO login_attempts (ip, started, attempts) VALUES (?, ?, 1) ON CONFLICT (ip) DO UPDATE SET attempts=login_attempts.attempts+1 RETURNING attempts', (ip, now)).fetchone()[0]
+            limited = count > 10
             if limited:
                 self.reply(429, {'error': 'Thử quá nhiều lần. Vui lòng đợi 5 phút.'})
                 return
@@ -145,9 +186,9 @@ class Handler(SimpleHTTPRequestHandler):
                 self.reply(401, {'error': 'Tên đăng nhập hoặc mật khẩu không đúng.'})
                 return
             token, csrf = secrets.token_urlsafe(32), secrets.token_urlsafe(32)
-            with LOCK:
-                SESSIONS[token] = {'csrf': csrf, 'expires': now + 8 * 3600}
-                ATTEMPTS.pop(ip, None)
+            with connect() as db:
+                db.execute('INSERT INTO admin_sessions VALUES (?, ?, ?, ?)', (hashlib.sha256(token.encode()).hexdigest(), csrf, now + 8 * 3600, session_identity()))
+                db.execute('DELETE FROM login_attempts WHERE ip=?', (ip,))
             secure = '; Secure' if os.environ.get('COOKIE_SECURE') == '1' else ''
             self.reply(200, {'csrf': csrf}, f'catalog_session={token}; HttpOnly; SameSite=Strict; Path=/; Max-Age=28800{secure}')
             return
@@ -160,12 +201,14 @@ class Handler(SimpleHTTPRequestHandler):
             return
         if path == '/api/logout':
             cookie = SimpleCookie(self.headers.get('Cookie', ''))
-            with LOCK:
-                SESSIONS.pop(cookie['catalog_session'].value, None)
+            with connect() as db:
+                db.execute('DELETE FROM admin_sessions WHERE token=?', (hashlib.sha256(cookie['catalog_session'].value.encode()).hexdigest(),))
             self.reply(200, {}, 'catalog_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0')
         elif path == '/api/plans':
             try:
                 plans = validate(data.get('plans'))
+                if type(data.get('version')) is not int:
+                    raise ValueError('Phiên bản danh sách không hợp lệ.')
                 with connect() as db:
                     changed = db.execute('UPDATE catalog SET body=?, version=version+1 WHERE id=1 AND version=?', (json.dumps(plans, ensure_ascii=False), data.get('version'))).rowcount
                     version = db.execute('SELECT version FROM catalog WHERE id=1').fetchone()[0]
@@ -186,10 +229,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if len(PASSWORD) < 12:
         parser.error('Đặt ADMIN_PASSWORD ít nhất 12 ký tự qua biến môi trường trước khi chạy.')
-    DB.parent.mkdir(parents=True, exist_ok=True)
-    with connect() as db:
-        db.execute('CREATE TABLE IF NOT EXISTS catalog (id INTEGER PRIMARY KEY, body TEXT NOT NULL, version INTEGER NOT NULL)')
-        db.execute('INSERT OR IGNORE INTO catalog VALUES (1, ?, 1)', (json.dumps(validate(json.loads((ROOT / 'data/plans.json').read_text()))),))
-    os.chmod(DB, 0o600)
+    initialize()
     print(f'Server on port {args.port}; database: {DB}', flush=True)
     ThreadingHTTPServer((args.bind, args.port), Handler).serve_forever()

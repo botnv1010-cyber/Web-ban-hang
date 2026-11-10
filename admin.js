@@ -4,7 +4,32 @@ const $=id=>document.getElementById(id), form=$('edit-form');
 let plans=[],version,csrf,editing=null,busy=false;
 function option(value,text){const o=document.createElement('option');o.value=value;o.textContent=text;return o}
 $('category').append(option('','Tất cả dịch vụ'));for(const [key,name] of Object.entries(groups)){$('category').append(option(key,name));form.elements.category.append(option(key,name))}
-async function api(path,data){const r=await fetch('/api/'+path,{cache:'no-store',...(data?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf||''},body:JSON.stringify(data)}:{})});const body=await r.json();if(!r.ok){if(r.status===401&&path!=='login'){csrf=null;$('workspace').hidden=true;$('login').hidden=false}throw Error(body.error||'Không thể xử lý yêu cầu.')}return body}
+class ApiError extends Error {
+  constructor(message,status){super(message);this.status=status}
+}
+function backendError(status){
+  if(status===404||status===405)return 'Không tìm thấy API quản trị. Trang này cần chạy bằng server.py; GitHub Pages và máy chủ tĩnh không hỗ trợ đăng nhập hoặc lưu gói.';
+  if(status>=500)return 'Máy chủ quản trị đang không khả dụng (HTTP '+status+'). Vui lòng kiểm tra tiến trình server.py và cấu hình chuyển tiếp /api/.';
+  return 'API quản trị trả về dữ liệu không hợp lệ (HTTP '+status+'). Vui lòng kiểm tra địa chỉ máy chủ và cấu hình /api/.';
+}
+async function api(path,data){
+  let r;
+  try{
+    r=await fetch(new URL('api/'+path,location.href),{cache:'no-store',...(data?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf||''},body:JSON.stringify(data)}:{})});
+  }catch{throw new ApiError('Không kết nối được máy chủ quản trị. Kiểm tra kết nối mạng và máy chủ rồi thử lại.',0)}
+  const type=r.headers.get('Content-Type')||'';
+  if(!type.toLowerCase().includes('application/json'))throw new ApiError(backendError(r.status),r.status);
+  let body;
+  try{body=await r.json()}catch{throw new ApiError(backendError(r.status),r.status)}
+  if(!body||typeof body!=='object'||Array.isArray(body))throw new ApiError(backendError(r.status),r.status);
+  if(!r.ok){
+    if(r.status===401&&path!=='login'){csrf=null;$('workspace').hidden=true;$('login').hidden=false}
+    throw new ApiError(typeof body.error==='string'?body.error:backendError(r.status),r.status);
+  }
+  if((path==='session'||path==='login')&&typeof body.csrf!=='string')throw new ApiError(backendError(r.status),r.status);
+  if(path==='plans'&&!data&&(!Array.isArray(body.plans)||!Number.isInteger(body.version)))throw new ApiError(backendError(r.status),r.status);
+  return body;
+}
 function status(message,error=false){$('status').textContent=message;$('status').className=error?'error':''}
 async function load(){const data=await api('plans');plans=data.plans;version=data.version;render()}
 function render(){ $('total').textContent=plans.length;$('active').textContent=plans.filter(p=>p.active).length;$('inactive').textContent=plans.filter(p=>!p.active).length;const query=$('search').value.trim().toLocaleLowerCase('vi');const visible=plans.filter(p=>(!$('category').value||p.category===$('category').value)&&(!$('visibility').value||String(p.active)===$('visibility').value)&&(p.name+' '+p.details).toLocaleLowerCase('vi').includes(query));$('count').textContent=`${visible.length} gói dịch vụ`;$('empty').hidden=visible.length>0;$('rows').replaceChildren();for(const p of visible){const tr=document.createElement('tr');function cell(text){const td=document.createElement('td');td.textContent=text;tr.append(td);return td}const title=cell(p.name);const sub=document.createElement('small');sub.textContent=p.duration;title.append(sub);cell(groups[p.category]);cell(p.price.toLocaleString('vi-VN')+'đ');const badge=document.createElement('span');badge.className='badge'+(p.active?'':' off');badge.textContent=p.active?'Đang hiển thị':'Đang ẩn';cell('').append(badge);const actions=document.createElement('div');actions.className='actions';for(const [label,fn] of [['Sửa',()=>edit(p)],['Xóa',()=>remove(p)]]){const b=document.createElement('button');b.type='button';b.className='secondary';b.textContent=label;b.onclick=fn;actions.append(b)}cell('').append(actions);$('rows').append(tr)}}
@@ -15,4 +40,4 @@ form.onsubmit=async e=>{e.preventDefault();const price=Number(form.elements.pric
 $('login-form').onsubmit=async e=>{e.preventDefault();const button=e.target.querySelector('button');button.disabled=true;try{const result=await api('login',{username:$('username').value.trim(),password:$('password').value});csrf=result.csrf;$('password').value='';await load();$('login').hidden=true;$('workspace').hidden=false;status('')}catch(e){status(e.message,true)}finally{button.disabled=false}};
 $('logout').onclick=async()=>{try{await api('logout',{});csrf=null;plans=[];$('editor').close();$('workspace').hidden=true;$('login').hidden=false;status('Đã đăng xuất.')}catch(e){status(e.message,true)}};
 $('add').onclick=()=>edit(null);$('close').onclick=$('cancel').onclick=()=>$('editor').close();for(const id of ['search','category','visibility'])$(id).addEventListener('input',render);
-(async()=>{try{csrf=(await api('session')).csrf;await load();$('login').hidden=true;$('workspace').hidden=false}catch(e){if(csrf)status(e.message,true)}})();
+(async()=>{try{csrf=(await api('session')).csrf;await load();$('login').hidden=true;$('workspace').hidden=false}catch(e){if(e.status!==401)status(e.message,true)}})();
