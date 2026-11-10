@@ -1,0 +1,1001 @@
+[
+  {
+    "id": "ca-0",
+    "category": "ca",
+    "name": "Gói CA1",
+    "duration": "",
+    "price": 1792000,
+    "details": "Cấp mới 1 năm Chữ ký số USB Token cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Có\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-1",
+    "category": "ca",
+    "name": "Gói CA2",
+    "duration": "",
+    "price": 2691000,
+    "details": "Cấp mới 2 năm Chữ ký số USB Token cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Có\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-2",
+    "category": "ca",
+    "name": "Gói CA3",
+    "duration": "",
+    "price": 3052000,
+    "details": "Cấp mới 3 năm Chữ ký số USB Token cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Có\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-3",
+    "category": "ca",
+    "name": "Gói CA1_GH",
+    "duration": "",
+    "price": 1252000,
+    "details": "Gia hạn 1 năm Chữ ký số USB Token cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-4",
+    "category": "ca",
+    "name": "Gói CA2_GH",
+    "duration": "",
+    "price": 2151000,
+    "details": "Gia hạn 2 năm Chữ ký số USB Token cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-5",
+    "category": "ca",
+    "name": "Gói CA3_GH",
+    "duration": "",
+    "price": 2856000,
+    "details": "Gia hạn 3 năm Chữ ký số USB Token cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-6",
+    "category": "ca",
+    "name": "Gói CACN1",
+    "duration": "",
+    "price": 486000,
+    "details": "Cấp mới 1 năm Chữ ký số USB Token cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Có\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-7",
+    "category": "ca",
+    "name": "Gói CACN2",
+    "duration": "",
+    "price": 826000,
+    "details": "Cấp mới 2 năm Chữ ký số USB Token cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Có\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-8",
+    "category": "ca",
+    "name": "Gói CACN3",
+    "duration": "",
+    "price": 1166000,
+    "details": "Cấp mới 3 năm Chữ ký số USB Token cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Có\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-9",
+    "category": "ca",
+    "name": "Gói CACN1_GH",
+    "duration": "",
+    "price": 486000,
+    "details": "Gia hạn 1 năm Chữ ký số USB Token cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-10",
+    "category": "ca",
+    "name": "Gói CACN2_GH",
+    "duration": "",
+    "price": 826000,
+    "details": "Gia hạn 2 năm Chữ ký số USB Token cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-11",
+    "category": "ca",
+    "name": "Gói CACN3_GH",
+    "duration": "",
+    "price": 1166000,
+    "details": "Gia hạn 3 năm Chữ ký số USB Token cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị USB TOKEN: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-66",
+    "category": "ca",
+    "name": "Gói HSM1",
+    "duration": "",
+    "price": 4810000,
+    "details": "Cấp mới 1 năm Chữ ký số HSM cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-67",
+    "category": "ca",
+    "name": "Gói HSM2",
+    "duration": "",
+    "price": 9081000,
+    "details": "Cấp mới 2 năm Chữ ký số HSM cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-68",
+    "category": "ca",
+    "name": "Gói HSM3",
+    "duration": "",
+    "price": 12960000,
+    "details": "Cấp mới 3 năm Chữ ký số HSM cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-69",
+    "category": "ca",
+    "name": "Gói HSM_CN1",
+    "duration": "",
+    "price": 486000,
+    "details": "Cấp mới 1 năm Chữ ký số HSM cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-70",
+    "category": "ca",
+    "name": "Gói HSM_CN2",
+    "duration": "",
+    "price": 826000,
+    "details": "Cấp mới 2 năm Chữ ký số HSM cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-71",
+    "category": "ca",
+    "name": "Gói HSM_CN3",
+    "duration": "",
+    "price": 1166000,
+    "details": "Cấp mới 3 năm Chữ ký số HSM cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-72",
+    "category": "ca",
+    "name": "Gói MCA1",
+    "duration": "",
+    "price": 588000,
+    "details": "Cấp mới 1 năm Chữ ký số Mobile CA cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị: Giá cước chưa kèm phí SIM CA 99.000đ\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-73",
+    "category": "ca",
+    "name": "Gói MCA2",
+    "duration": "",
+    "price": 1079000,
+    "details": "Cấp mới 2 năm Chữ ký số Mobile CA cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị: Giá cước chưa kèm phí SIM CA 99.000đ\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-74",
+    "category": "ca",
+    "name": "Gói MCA3",
+    "duration": "",
+    "price": 1569000,
+    "details": "Cấp mới 3 năm Chữ ký số Mobile CA cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị: Giá cước chưa kèm phí SIM CA 99.000đ\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-75",
+    "category": "ca",
+    "name": "Gói MCA1_GH",
+    "duration": "",
+    "price": 529000,
+    "details": "Gia hạn 1 năm Chữ ký số Mobile CA cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-76",
+    "category": "ca",
+    "name": "Gói MCA2_GH",
+    "duration": "",
+    "price": 971000,
+    "details": "Gia hạn 2 năm Chữ ký số Mobile CA cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-77",
+    "category": "ca",
+    "name": "Gói MCA3_GH",
+    "duration": "",
+    "price": 1412000,
+    "details": "Gia hạn 3 năm Chữ ký số Mobile CA cho tổ chức\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-78",
+    "category": "ca",
+    "name": "Gói MCA_CN1",
+    "duration": "",
+    "price": 391000,
+    "details": "Cấp mới 1 năm Chữ ký số Mobile CA cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị: Giá cước chưa kèm phí SIM CA 99.000đ\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-79",
+    "category": "ca",
+    "name": "Gói MCA_CN2",
+    "duration": "",
+    "price": 686000,
+    "details": "Cấp mới 2 năm Chữ ký số Mobile CA cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị: Giá cước chưa kèm phí SIM CA 99.000đ\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-80",
+    "category": "ca",
+    "name": "Gói MCA_CN3",
+    "duration": "",
+    "price": 980000,
+    "details": "Cấp mới 3 năm Chữ ký số Mobile CA cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị: Giá cước chưa kèm phí SIM CA 99.000đ\nLoại đăng ký: Đăng ký mới",
+    "active": true
+  },
+  {
+    "id": "ca-81",
+    "category": "ca",
+    "name": "Gói MCA_CN1GH",
+    "duration": "",
+    "price": 352000,
+    "details": "Gia hạn 1 năm Chữ ký số Mobile CA cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 12 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-82",
+    "category": "ca",
+    "name": "Gói MCA_CN2GH",
+    "duration": "",
+    "price": 617000,
+    "details": "Gia hạn 2 năm Chữ ký số Mobile CA cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 24 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "ca-83",
+    "category": "ca",
+    "name": "Gói MCA_CN3GH",
+    "duration": "",
+    "price": 882000,
+    "details": "Gia hạn 3 năm Chữ ký số Mobile CA cho cá nhân\nPhí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nThời gian sử dụng: 36 tháng\nThuế VAT: Đã gồm\nThiết bị: Không\nLoại đăng ký: Gia hạn",
+    "active": true
+  },
+  {
+    "id": "invoice-0",
+    "category": "invoice",
+    "name": "Gói HD_300_TT78",
+    "duration": "",
+    "price": 421000,
+    "details": "Gói 300 hóa đơn điện tử\nĐối tượng sử dụng: Doanh nghiệp\nSố lượng: 300\nThuế: Đã gồm\nTổng giá gói: 421.000đ",
+    "active": true
+  },
+  {
+    "id": "invoice-1",
+    "category": "invoice",
+    "name": "Gói HD_500_TT78",
+    "duration": "",
+    "price": 572000,
+    "details": "Gói 500 hóa đơn điện tử\nĐối tượng sử dụng: Doanh nghiệp\nSố lượng: 500\nThuế: Đã gồm\nTổng giá gói: 572.000đ",
+    "active": true
+  },
+  {
+    "id": "invoice-2",
+    "category": "invoice",
+    "name": "Gói HD_1K_TT78",
+    "duration": "",
+    "price": 896000,
+    "details": "Gói 1,000 hóa đơn điện tử\nĐối tượng sử dụng: Doanh nghiệp\nSố lượng: 1,000\nThuế: Đã gồm\nTổng giá gói: 896.000đ",
+    "active": true
+  },
+  {
+    "id": "invoice-3",
+    "category": "invoice",
+    "name": "Gói HD_2K_TT78",
+    "duration": "",
+    "price": 1350000,
+    "details": "Gói 2,000 hóa đơn điện tử\nĐối tượng sử dụng: Doanh nghiệp\nSố lượng: 2,000\nThuế: Đã gồm\nTổng giá gói: 1.350.000đ",
+    "active": true
+  },
+  {
+    "id": "invoice-4",
+    "category": "invoice",
+    "name": "Gói HD_5K_TT78",
+    "duration": "",
+    "price": 2883000,
+    "details": "Gói 5,000 hóa đơn điện tử\nĐối tượng sử dụng: Doanh nghiệp\nSố lượng: 5,000\nThuế: Đã gồm\nTổng giá gói: 2.883.000đ",
+    "active": true
+  },
+  {
+    "id": "invoice-5",
+    "category": "invoice",
+    "name": "Gói HD_10K_TT78",
+    "duration": "",
+    "price": 4773000,
+    "details": "Gói 10,000 hóa đơn điện tử\nĐối tượng sử dụng: Doanh nghiệp\nSố lượng: 10,000\nThuế: Đã gồm\nTổng giá gói: 4.773.000đ",
+    "active": true
+  },
+  {
+    "id": "bh-0",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 10 người lao động",
+    "duration": "",
+    "price": 196000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-1",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 10 người lao động",
+    "duration": "",
+    "price": 274000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-2",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 10 người lao động",
+    "duration": "",
+    "price": 333000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-3",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 10 người lao động",
+    "duration": "",
+    "price": 196000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-4",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 10 người lao động",
+    "duration": "",
+    "price": 274000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-5",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 10 người lao động",
+    "duration": "",
+    "price": 333000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-6",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 100 người lao động",
+    "duration": "",
+    "price": 455000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-7",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 100 người lao động",
+    "duration": "",
+    "price": 780000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-8",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 100 người lao động",
+    "duration": "",
+    "price": 814000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-9",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 100 người lao động",
+    "duration": "",
+    "price": 455000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-10",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 100 người lao động",
+    "duration": "",
+    "price": 780000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-11",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 100 người lao động",
+    "duration": "",
+    "price": 814000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-12",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 1000 người lao động",
+    "duration": "",
+    "price": 756000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-13",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 1000 người lao động",
+    "duration": "",
+    "price": 1234000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-14",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH 1000 người lao động",
+    "duration": "",
+    "price": 1392000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-15",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 1000 người lao động",
+    "duration": "",
+    "price": 756000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-16",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 1000 người lao động",
+    "duration": "",
+    "price": 1234000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-17",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 1000 người lao động",
+    "duration": "",
+    "price": 1392000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-18",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH không giới hạn NLĐ",
+    "duration": "",
+    "price": 1060000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-19",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH không giới hạn NLĐ",
+    "duration": "",
+    "price": 1718000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-20",
+    "category": "bh",
+    "name": "Gói Đăng ký vBHXH không giới hạn NLĐ",
+    "duration": "",
+    "price": 1975000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-21",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH không giới hạn NLĐ",
+    "duration": "",
+    "price": 1060000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-22",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH không giới hạn NLĐ",
+    "duration": "",
+    "price": 1718000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-23",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH không giới hạn NLĐ",
+    "duration": "",
+    "price": 1975000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-24",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 18 tháng gói 10 người lao động",
+    "duration": "",
+    "price": 216000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-25",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 33 tháng gói 10 người lao động",
+    "duration": "",
+    "price": 345000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-26",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 48 tháng gói 10 người lao động",
+    "duration": "",
+    "price": 410000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-27",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 18 tháng gói 10 người lao động",
+    "duration": "",
+    "price": 216000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-28",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 33 tháng gói 10 người lao động",
+    "duration": "",
+    "price": 345000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-29",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 48 tháng gói 10 người lao động",
+    "duration": "",
+    "price": 410000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 10 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-30",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 18 tháng gói 100 người lao động",
+    "duration": "",
+    "price": 540000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-31",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 33 tháng gói 100 người lao động",
+    "duration": "",
+    "price": 864000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-32",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 48 tháng gói 100 người lao động",
+    "duration": "",
+    "price": 1026000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-33",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 18 tháng gói 100 người lao động",
+    "duration": "",
+    "price": 540000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-34",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 33 tháng gói 100 người lao động",
+    "duration": "",
+    "price": 864000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-35",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 48 tháng gói 100 người lao động",
+    "duration": "",
+    "price": 1026000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 100 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-36",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 18 tháng gói 1000 người lao động",
+    "duration": "",
+    "price": 864000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-37",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 33 tháng gói 1000 người lao động",
+    "duration": "",
+    "price": 1382000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-38",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 48 tháng gói 1000 người lao động",
+    "duration": "",
+    "price": 1641000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-39",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 18 tháng gói 1000 người lao động",
+    "duration": "",
+    "price": 864000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-40",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 33 tháng gói 1000 người lao động",
+    "duration": "",
+    "price": 1382000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-41",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 48 tháng gói 1000 người lao động",
+    "duration": "",
+    "price": 1641000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Tối đa 1000 người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-42",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 18 tháng gói không giới hạn người lao động",
+    "duration": "",
+    "price": 1188000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-43",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 33 tháng gói không giới hạn người lao động",
+    "duration": "",
+    "price": 1900000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-44",
+    "category": "bh",
+    "name": "Gói Cấp mới vBHXH 48 tháng gói không giới hạn người lao động",
+    "duration": "",
+    "price": 2248000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Cấp mới\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-45",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 18 tháng gói không giới hạn người lao động",
+    "duration": "",
+    "price": 1188000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 18 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-46",
+    "category": "bh",
+    "name": "Gói dùng thử vBHXH 1 tháng không giới hạn người lao động",
+    "duration": "",
+    "price": 0,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Tổ chức\nThời gian sử dụng: 1 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Có\nLoại đăng kí: Cấp mới\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-47",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 33 tháng gói không giới hạn người lao động",
+    "duration": "",
+    "price": 1900000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 33 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "bh-48",
+    "category": "bh",
+    "name": "Gói Gia hạn vBHXH 48 tháng gói không giới hạn người lao động",
+    "duration": "",
+    "price": 2248000,
+    "details": "Phí hòa mạng: 0đ\nPhí lắp đặt: 0đ\nLoại khách hàng: Doanh nghiệp\nThời gian sử dụng: 48 tháng\nThuế VAT: Không chịu VAT\nThiết bị: Không\nLoại đăng kí: Gia hạn\nSố người lao động: Không giới hạn người lao động",
+    "active": true
+  },
+  {
+    "id": "contract-0",
+    "category": "contract",
+    "name": "vCont20",
+    "duration": "",
+    "price": 0,
+    "details": "Gói dùng thử 20 hợp đồng trong 30 ngày\nSố lượng HĐ20\nPhí gói0đ\nPhí chứng thực0đ\nPhí khởi tạo0đ\nĐăng ký kèm SMS Brandname với giá 150đ/SMS nội mạng Viettel\nĐăng ký kèm eKYC chỉ từ 1000đ/SMS",
+    "active": true
+  },
+  {
+    "id": "contract-1",
+    "category": "contract",
+    "name": "VCONT_100",
+    "duration": "",
+    "price": 1913000,
+    "details": "Gói 100 hợp đồng kèm chứng thực\nSố lượng HĐ100\nPhí gói0đ\nPhí chứng thực0đ\nPhí khởi tạo1.000.000đ\nĐăng ký kèm SMS Brandname với giá 150đ/SMS nội mạng Viettel\nĐăng ký kèm eKYC chỉ từ 1000đ/SMS",
+    "active": true
+  },
+  {
+    "id": "contract-2",
+    "category": "contract",
+    "name": "VCONT_5000",
+    "duration": "",
+    "price": 38400000,
+    "details": "Gói 5.000 hợp đồng kèm chứng thực\nSố lượng HĐ5.000\nPhí gói0đ\nPhí chứng thực0đ\nPhí khởi tạo1.000.000đ\nĐăng ký kèm SMS Brandname với giá 150đ/SMS nội mạng Viettel\nĐăng ký kèm eKYC chỉ từ 1000đ/SMS",
+    "active": true
+  },
+  {
+    "id": "contract-3",
+    "category": "contract",
+    "name": "VCONT_500",
+    "duration": "",
+    "price": 5345000,
+    "details": "Gói 500 hợp đồng kèm chứng thực\nSố lượng HĐ500\nPhí gói0đ\nPhí chứng thực0đ\nPhí khởi tạo1.000.000đ\nĐăng ký kèm SMS Brandname với giá 150đ/SMS nội mạng Viettel\nĐăng ký kèm eKYC chỉ từ 1000đ/SMS",
+    "active": true
+  },
+  {
+    "id": "contract-4",
+    "category": "contract",
+    "name": "VCONT_1000",
+    "duration": "",
+    "price": 9250000,
+    "details": "Gói 1.000 hợp đồng kèm chứng thực\nSố lượng HĐ1.000\nPhí gói0đ\nPhí chứng thực0đ\nPhí khởi tạo1.000.000đ\nĐăng ký kèm SMS Brandname với giá 150đ/SMS nội mạng Viettel\nĐăng ký kèm eKYC chỉ từ 1000đ/SMS",
+    "active": true
+  },
+  {
+    "id": "contract-5",
+    "category": "contract",
+    "name": "VCONT_100K",
+    "duration": "",
+    "price": 705000000,
+    "details": "Gói 100.000 hợp đồng kèm chứng thực\nSố lượng HĐ100.000\nPhí gói0đ\nPhí chứng thực0đ\nPhí khởi tạo1.000.000đ\nĐăng ký kèm SMS Brandname với giá 150đ/SMS nội mạng Viettel\nĐăng ký kèm eKYC chỉ từ 1000đ/SMS",
+    "active": true
+  },
+  {
+    "id": "contract-6",
+    "category": "contract",
+    "name": "VCONT_10K",
+    "duration": "",
+    "price": 73600000,
+    "details": "Gói 10.000 hợp đồng kèm chứng thực\nSố lượng HĐ0\nPhí gói0đ\nPhí chứng thực0đ\nPhí khởi tạo1.000.000đ\nĐăng ký kèm SMS Brandname với giá 150đ/SMS nội mạng Viettel\nĐăng ký kèm eKYC chỉ từ 1000đ/SMS\nTrang nguồn ghi số lượng HĐ là 0 trong khi mô tả là 10.000 hợp đồng. Vui lòng xác nhận khi tư vấn.",
+    "active": true
+  },
+  {
+    "id": "tendoo-plans-0",
+    "name": "Gói dịch vụ quản lý bán hàng 3 năm tặng 9 tháng",
+    "duration": "45 Tháng",
+    "price": 5248800,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-1",
+    "name": "Gói dịch vụ quản lý bán hàng 3 năm",
+    "duration": "3 Năm",
+    "price": 5248800,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-2",
+    "name": "Gói dịch vụ quản lý bán hàng 2 năm tặng 6 tháng",
+    "duration": "30 Tháng",
+    "price": 3693600,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-3",
+    "name": "Gói dịch vụ quản lý bán hàng 2 năm",
+    "duration": "2 Năm",
+    "price": 3693600,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-4",
+    "name": "Gói 3 năm DVQLBH combo ND70",
+    "duration": "3 Năm",
+    "price": 1963000,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-5",
+    "name": "Gói dịch vụ quản lý bán hàng 1 năm tặng 3 tháng",
+    "duration": "15 Tháng",
+    "price": 1944000,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-6",
+    "name": "Gói dịch vụ quản lý bán hàng 1 năm",
+    "duration": "1 Năm",
+    "price": 1944000,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-7",
+    "name": "Gói 2 năm DVQLBH combo ND70",
+    "duration": "2 Năm",
+    "price": 1423000,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-8",
+    "name": "Gói 1 năm DVQLBH combo ND70",
+    "duration": "1 Năm",
+    "price": 785000,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-plans-9",
+    "name": "Gói miễn phí 1 tháng",
+    "duration": "1 Tháng",
+    "price": 0,
+    "details": "(Đã bao gồm VAT)",
+    "active": true,
+    "category": "tendoo"
+  },
+  {
+    "id": "tendoo-devices-0",
+    "name": "Máy POS để bàn Tendoo (2 màn hình)",
+    "duration": "1 Năm",
+    "price": 8200000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  },
+  {
+    "id": "tendoo-devices-1",
+    "name": "Máy POS để bàn Tendoo (1 màn hình)",
+    "duration": "1 Năm",
+    "price": 6700000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  },
+  {
+    "id": "tendoo-devices-2",
+    "name": "Máy POS cầm tay",
+    "duration": "1 Năm",
+    "price": 4200000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  },
+  {
+    "id": "tendoo-devices-3",
+    "name": "Máy in tem nhãn + vận đơn",
+    "duration": "1 Năm",
+    "price": 1500000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  },
+  {
+    "id": "tendoo-devices-4",
+    "name": "Máy in HĐ cổng USB+LAN,khổ giấy 80mm",
+    "duration": "1 Năm",
+    "price": 1200000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  },
+  {
+    "id": "tendoo-devices-5",
+    "name": "Máy quét mã vạch cố định",
+    "duration": "1 Năm",
+    "price": 1000000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  },
+  {
+    "id": "tendoo-devices-6",
+    "name": "Máy quét mã vạch cầm tay",
+    "duration": "1 Năm",
+    "price": 900000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  },
+  {
+    "id": "tendoo-devices-7",
+    "name": "TD_LOA",
+    "duration": "1 Năm",
+    "price": 460000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  },
+  {
+    "id": "tendoo-devices-8",
+    "name": "Máy thông báo thanh toán QR tĩnh",
+    "duration": "1 Năm",
+    "price": 300000,
+    "details": "(Giá đã bao gồm VAT và phí bản quyền)",
+    "active": true,
+    "category": "devices"
+  }
+]
