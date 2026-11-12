@@ -51,3 +51,8 @@ Form giữ yêu cầu sau mọi kết quả gửi. `Chưa cấu hình email` khi
 - Lưu nhiều mục ở hai phiên đồng thời vẫn kiểm tra version, trả 409 cho bản sửa cũ thay vì ghi đè dữ liệu mới.
 
 Kiểm chứng bổ sung: **15 unittest đạt**; Chromium kiểm tra mở/tải lại các URL admin, cập nhật nội dung ở cùng browser và context độc lập, làm mới bảng giá đang mở, tự lưu banner (Blob giả lập), responsive và đăng xuất. Có thể chạy lại browser test với Playwright + Chromium đã cài: `PYTHON=python3 CHROMIUM_PATH=/usr/bin/chromium node tests/admin_browser.cjs`. Bài test tự tạo mật khẩu, database tạm và server ở port rảnh, không dùng database Production. Dịch vụ Neon/Blob/Resend thật và cấu hình Vercel Production vẫn cần kiểm tra ở môi trường triển khai.
+
+
+### Giữ phiên khi chuyển trang admin
+
+Sidebar và bộ chọn trang dùng History API để chuyển nội dung giữa các URL riêng, giữ nguyên tài liệu và CSRF trong phiên. Mở URL trực tiếp hoặc tải lại vẫn gọi `/api/session`; chỉ hiện form đăng nhập sau HTTP 401. Trong thời gian kiểm tra, hiển thị trạng thái chờ; lỗi mạng/503 có nút Thử lại, không giả định rằng phiên đã hết hạn. Cookie HttpOnly vẫn do máy chủ kiểm tra trên mọi API riêng; không lưu token đăng nhập vào localStorage. Browser regression test có kiểm tra giữ nguyên document khi bấm sidebar, phục hồi session chậm và lỗi backend tạm thời.

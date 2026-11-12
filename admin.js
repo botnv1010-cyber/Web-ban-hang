@@ -15,7 +15,7 @@ function backendError(status){
 async function api(path,data){
   let r;
   try{
-    r=await fetch(new URL('/api/'+path,location.origin),{cache:'no-store',...(data?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf||''},body:JSON.stringify(data)}:{})});
+    r=await fetch(new URL('/api/'+path,location.origin),{cache:'no-store',credentials:'same-origin',...(data?{method:'POST',headers:{'Content-Type':'application/json','X-CSRF-Token':csrf||''},body:JSON.stringify(data)}:{})});
   }catch{throw new ApiError('Không kết nối được máy chủ quản trị. Kiểm tra kết nối mạng và máy chủ rồi thử lại.',0)}
   const type=r.headers.get('Content-Type')||'';
   if(!type.toLowerCase().includes('application/json'))throw new ApiError(backendError(r.status),r.status);
@@ -23,7 +23,7 @@ async function api(path,data){
   try{body=await r.json()}catch{throw new ApiError(backendError(r.status),r.status)}
   if(!body||typeof body!=='object'||Array.isArray(body))throw new ApiError(backendError(r.status),r.status);
   if(!r.ok){
-    if(r.status===401&&path!=='login'){csrf=null;document.body.classList.remove('authenticated');$('admin-nav').hidden=true;$('workspace').hidden=true;$('login').hidden=false}
+    if(r.status===401&&path!=='login')showLogin()
     throw new ApiError(typeof body.error==='string'?body.error:backendError(r.status),r.status);
   }
   if((path==='session'||path==='login')&&typeof body.csrf!=='string')throw new ApiError(backendError(r.status),r.status);
@@ -39,10 +39,16 @@ async function persist(next){if(busy)throw Error('Đang lưu, vui lòng đợi.'
 async function remove(p){if(!confirm(`Xóa gói “${p.name}”? Thao tác này sẽ cập nhật website.`))return;try{await persist(plans.filter(row=>row.id!==p.id))}catch(e){status(e.message,true)}}
 form.onsubmit=async e=>{e.preventDefault();const price=Number(form.elements.price.value);if(!Number.isSafeInteger(price)||price<0)return;const p={id:editing||crypto.randomUUID(),category:form.elements.category.value,name:form.elements.name.value.trim(),duration:form.elements.duration.value.trim(),price,details:form.elements.details.value.trim(),active:form.elements.active.checked};if(!p.name){$('edit-error').textContent='Vui lòng nhập tên gói.';return}$('save').disabled=true;try{await persist(editing?plans.map(row=>row.id===editing?p:row):[...plans,p]);$('editor').close()}catch(e){$('edit-error').textContent=e.message}finally{$('save').disabled=false}};
 $('login-form').onsubmit=async e=>{e.preventDefault();const button=e.target.querySelector('button');button.disabled=true;try{const result=await api('login',{username:$('username').value.trim(),password:$('password').value});csrf=result.csrf;$('password').value='';await enterAdmin();status('')}catch(e){status(e.message,true)}finally{button.disabled=false}};
-$('logout').onclick=async()=>{try{await api('logout',{});csrf=null;plans=[];document.body.classList.remove('authenticated');$('admin-nav').hidden=true;$('editor').close();$('workspace').hidden=true;$('login').hidden=false;status('Đã đăng xuất.')}catch(e){status(e.message,true)}};
+$('logout').onclick=async()=>{try{await api('logout',{});plans=[];showLogin();status('Đã đăng xuất.')}catch(e){status(e.message,true)}};
 $('add').onclick=()=>edit(null);$('close').onclick=$('cancel').onclick=()=>$('editor').close();for(const id of ['search','category','visibility'])$(id).addEventListener('input',render);
-(async()=>{try{csrf=(await api('session')).csrf;await enterAdmin()}catch(e){if(e.status!==401)status(e.message,true)}})();
+$('session-retry').onclick=restoreSession;restoreSession();
 
 async function move(p,direction){const index=plans.indexOf(p),next=index+direction;if(next<0||next>=plans.length)return;const ordered=[...plans];[ordered[index],ordered[next]]=[ordered[next],ordered[index]];try{await persist(ordered)}catch(e){status(e.message,true)}}
 
-async function enterAdmin(){document.body.classList.add('authenticated');$('login').hidden=true;$('admin-nav').hidden=false;if(['/admin','/admin/','/admin.html'].includes(location.pathname)){location.replace('/admin/plans');return}window.dispatchEvent(new Event('admin:ready'));if(location.pathname==='/admin/plans'){await load();$('workspace').hidden=false}}
+function showLogin(){csrf=null;document.body.classList.remove('authenticated');$('admin-nav').hidden=true;$('workspace').hidden=true;$('session-check').hidden=true;$('login').hidden=false;if($('editor').open)$('editor').close();window.dispatchEvent(new Event('admin:locked'))}
+async function restoreSession(){
+ $('login').hidden=true;$('session-check').hidden=false;$('session-retry').hidden=true;$('session-message').textContent='Đang kiểm tra phiên đăng nhập…';
+ try{csrf=(await api('session')).csrf;await enterAdmin()}
+ catch(e){if(e.status!==401){$('session-message').textContent='Chưa kiểm tra được phiên đăng nhập. Vui lòng thử lại.';$('session-retry').hidden=false;status(e.message,true)}}
+}
+async function enterAdmin(){document.body.classList.add('authenticated');$('session-check').hidden=true;$('login').hidden=true;$('admin-nav').hidden=false;if(['/admin','/admin/','/admin.html'].includes(location.pathname))history.replaceState(null,'','/admin/plans');window.dispatchEvent(new Event('admin:ready'))}
