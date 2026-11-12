@@ -81,6 +81,32 @@ class CatalogTest(unittest.TestCase):
         self.assertEqual(self.request('POST', '/api/plans', {'plans':original,'version':public['version']}, headers)[0], 200)
         self.assertEqual(self.request('GET', '/api/plans')[2]['plans'], original)
 
+    def test_catalog_cache_revalidates_after_admin_save(self):
+        def get(etag=None):
+            conn = http.client.HTTPConnection('127.0.0.1', self.port, timeout=5)
+            conn.request('GET', '/api/plans', headers={'If-None-Match': etag} if etag else {})
+            response = conn.getresponse()
+            result = response.status, response.getheader('ETag'), response.getheader('Cache-Control'), response.read()
+            conn.close()
+            return result
+        status, etag, policy, raw = get()
+        self.assertEqual(status, 200)
+        self.assertIn('must-revalidate', policy)
+        self.assertEqual(get(etag)[0], 304)
+        self.assertEqual(get(etag)[3], b'')
+        original = json.loads(raw)
+        updated = [dict(plan) for plan in original['plans']]
+        updated[0]['price'] += 1
+        headers = self.login()
+        saved = self.request('POST', '/api/plans', {'plans': updated, 'version': original['version']}, headers)
+        self.assertEqual(saved[0], 200)
+        status, new_etag, _, raw = get(etag)
+        self.assertEqual(status, 200)
+        self.assertNotEqual(etag, new_etag)
+        self.assertEqual(json.loads(raw)['plans'], updated)
+        restored = self.request('POST', '/api/plans', {'plans': original['plans'], 'version': saved[2]['version']}, headers)
+        self.assertEqual(restored[0], 200)
+
     def test_private_files_and_cross_origin(self):
         for path in ['/.git/config','/server.py','/tests/test_server.py','/assets/../../server.py']:
             self.assertEqual(self.request('GET', path)[0], 404)

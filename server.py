@@ -99,6 +99,8 @@ class Handler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('X-Content-Type-Options', 'nosniff')
         self.send_header('Referrer-Policy', 'same-origin')
+        if not urlsplit(self.path).path.startswith('/api/'):
+            self.send_header('Cache-Control', 'public, max-age=0, must-revalidate')
         super().end_headers()
 
     def reply(self, status, data, cookie=None):
@@ -131,7 +133,20 @@ class Handler(SimpleHTTPRequestHandler):
         if path == '/api/plans':
             with connect() as db:
                 row = db.execute('SELECT body, version FROM catalog WHERE id=1').fetchone()
-            self.reply(200, {'plans': json.loads(row[0]), 'version': row[1]})
+            # Content-derived validators remain correct after database restores too.
+            etag = '"' + hashlib.sha256((str(row[1]) + ':' + row[0]).encode()).hexdigest() + '"'
+            validators = [value.strip().removeprefix('W/') for value in self.headers.get('If-None-Match', '').split(',')]
+            raw = json.dumps({'plans': json.loads(row[0]), 'version': row[1]}, ensure_ascii=False).encode()
+            unchanged = etag in validators or '*' in validators
+            self.send_response(304 if unchanged else 200)
+            self.send_header('ETag', etag)
+            self.send_header('Cache-Control', 'public, no-cache, must-revalidate')
+            if not unchanged:
+                self.send_header('Content-Type', 'application/json; charset=utf-8')
+                self.send_header('Content-Length', str(len(raw)))
+            self.end_headers()
+            if not unchanged:
+                self.wfile.write(raw)
         elif path == '/api/session':
             session = self.session()
             self.reply(200 if session else 401, {'csrf': session['csrf']} if session else {'error': 'Vui lòng đăng nhập.'})
