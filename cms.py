@@ -13,6 +13,7 @@ def initialize(db):
     db.execute('CREATE TABLE IF NOT EXISTS site_content (id INTEGER PRIMARY KEY, body TEXT NOT NULL, version INTEGER NOT NULL)')
     seed = (Path(__file__).parent/'data/content.json').read_text()
     db.execute('INSERT INTO site_content VALUES (1, ?, 1) ON CONFLICT (id) DO NOTHING', (seed,))
+    db.execute('CREATE TABLE IF NOT EXISTS consultation_email_errors (request_id TEXT PRIMARY KEY, code TEXT NOT NULL, message TEXT NOT NULL)')
     db.execute('CREATE TABLE IF NOT EXISTS consultations (id TEXT PRIMARY KEY, body TEXT NOT NULL, status TEXT NOT NULL, email_status TEXT NOT NULL, email_id TEXT NOT NULL, created DOUBLE PRECISION NOT NULL)')
 
 

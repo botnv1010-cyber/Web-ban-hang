@@ -11,6 +11,7 @@ from pathlib import Path
 import secrets
 import sqlite3
 import time
+import sys
 from http.cookies import SimpleCookie
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlsplit
@@ -152,8 +153,8 @@ class Handler(SimpleHTTPRequestHandler):
         if path == '/api/consultations':
             if not self.session(): self.reply(401,{'error':'Vui lòng đăng nhập.'}); return
             with connect() as db:
-                rows=db.execute('SELECT id, body, status, email_status, email_id, created FROM consultations ORDER BY created DESC LIMIT 500').fetchall()
-            self.reply(200,{'requests':[dict(id=r[0],data=json.loads(r[1]),status=r[2],emailStatus=r[3],emailId=r[4],created=r[5]) for r in rows]}); return
+                rows=db.execute('SELECT c.id, c.body, c.status, c.email_status, c.email_id, c.created, e.code, e.message FROM consultations c LEFT JOIN consultation_email_errors e ON e.request_id=c.id ORDER BY c.created DESC LIMIT 500').fetchall()
+            self.reply(200,{'requests':[dict(id=r[0],data=json.loads(r[1]),status=r[2],emailStatus=r[3],emailId=r[4],created=r[5],emailErrorCode=r[6],emailError=r[7]) for r in rows]}); return
         if path == '/api/plans':
             with connect() as db:
                 row = db.execute('SELECT body, version FROM catalog WHERE id=1').fetchone()
@@ -235,15 +236,19 @@ class Handler(SimpleHTTPRequestHandler):
                         self.reply(200, {'success':True,'requestId':item['request_id'],'emailStatus':existing[1]}); return
                     db.execute('INSERT INTO consultations VALUES (?, ?, ?, ?, ?, ?)',(item['request_id'],json.dumps(data,ensure_ascii=False),'Mới','Chưa cấu hình email','',time.time()))
                 item['text'] += '\nHotline: '+hotline
-                email_status='Chưa cấu hình email'; email_id=''
+                email_status='Chưa cấu hình email'; email_id=''; email_error=None
                 if os.environ.get('RESEND_API_KEY') and os.environ.get('RESEND_FROM_EMAIL'):
                     try:
                         email_id=mailer.send_registration_email(item)
                         if not isinstance(email_id,str) or not email_id: raise mailer.MailError('Invalid email ID')
                         email_status='Đã gửi'
-                    except mailer.MailError: email_status='Gửi lỗi'
+                    except mailer.MailError as error:
+                        email_status='Gửi lỗi'; email_error=error
+                        print('Email failed: request='+item['request_id']+' code='+error.code, file=sys.stderr)
                 with connect() as db:
                     db.execute('UPDATE consultations SET email_status=?, email_id=? WHERE id=?',(email_status,email_id,item['request_id']))
+                    if email_error:
+                        db.execute('INSERT INTO consultation_email_errors VALUES (?, ?, ?) ON CONFLICT (request_id) DO UPDATE SET code=excluded.code, message=excluded.message',(item['request_id'],email_error.code,str(email_error)))
                 self.reply(200, {'success': True, 'requestId': item['request_id'], 'emailStatus':email_status})
             except ValueError as error:
                 self.reply(400, {'error': str(error)})

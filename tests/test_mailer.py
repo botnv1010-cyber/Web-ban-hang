@@ -1,4 +1,5 @@
 import http.client
+import io
 import json
 import os
 from pathlib import Path
@@ -59,6 +60,8 @@ class RegistrationTest(unittest.TestCase):
             self.assertEqual(result['emailStatus'],'Gửi lỗi')
             with server.connect() as db:
                 self.assertEqual(db.execute('SELECT email_status FROM consultations').fetchone()[0],'Gửi lỗi')
+                self.assertEqual(db.execute('SELECT code,message FROM consultation_email_errors').fetchone(),('send_failed','Không gửi được email.'))
+            self.assertNotIn('emailError',result)
 
     def test_invalid_and_hidden_packages_do_not_send(self):
         with patch('mailer.send_registration_email') as send:
@@ -79,6 +82,17 @@ class RegistrationTest(unittest.TestCase):
 
 
 class ProviderTest(unittest.TestCase):
+    def test_provider_errors_are_classified_without_exposing_body(self):
+        cases=[(401,'API key invalid secret123','invalid_api_key'),(403,'You can only send testing emails to your own email secret123','resend_test_mode'),(403,'Domain secret123 is not verified','sender_domain'),(422,'invalid secret123','email_validation'),(429,'limit secret123','resend_rate_limit'),(503,'outage secret123','resend_http_503')]
+        for status,message,code in cases:
+            with self.subTest(status=status,code=code):
+                error=urllib.error.HTTPError('https://api.resend.com/emails',status,'error',{},io.BytesIO(json.dumps({'message':message}).encode()))
+                with patch.dict(os.environ,{'RESEND_API_KEY':'test','RESEND_FROM_EMAIL':'sender@example.com','MAIL_TO':'owner@example.com'}),patch('urllib.request.urlopen',side_effect=error):
+                    with self.assertRaises(mailer.MailError) as failure:
+                        mailer.send_registration_email({'email':'customer@example.com','request_id':'test-request','text':'Consultation'})
+                self.assertEqual(failure.exception.code,code)
+                self.assertNotIn('secret123',str(failure.exception))
+
     def test_provider_payload_and_idempotency(self):
         item={'request_id':'test-request-1234','email':'customer@example.com','text':'Thông tin gói'}
         response=MagicMock()

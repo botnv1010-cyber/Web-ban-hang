@@ -89,3 +89,16 @@ Kiểm thử Chromium bổ sung: tìm kiếm, sửa và giữ cố định mã n
 Đặt `MAIL_TO` thành một địa chỉ hộp thư của chủ website trong Vercel Environment Variables, cùng `RESEND_API_KEY` và `RESEND_FROM_EMAIL`. `RESEND_FROM_EMAIL` phải thuộc tên miền đã xác minh trong Resend; hộp thư nhận `MAIL_TO` có thể là Gmail/Outlook. Redeploy sau khi thay đổi cấu hình. Bản mới gửi email xác nhận đến khách và **BCC** một bản vào `MAIL_TO`, không hiển thị hộp thư này trong thư khách nhận. Nội dung có tên/số điện thoại/email khách, mã đăng ký, thông tin gói từ database và hotline. Chủ website bấm Reply sẽ trả lời email khách qua reply-to.
 
 Để trống MAIL_TO giữ luồng chỉ gửi xác nhận cho khách. MAIL_TO chỉ nhận một email, không nhập danh sách dấu phẩy hoặc tên hiển thị. Trạng thái/ID trong admin thuộc một yêu cầu Resend gửi cho khách và bản sao BCC; Đã gửi là nhà cung cấp chấp nhận, chưa xác nhận thư đã đến từng hộp thư. Kiểm tra Delivery/Spam trong Resend và hộp thư nhận khi thử dịch vụ thật. Unit test kiểm tra BCC, reply-to, thiếu MAIL_TO và từ chối địa chỉ cấu hình không hợp lệ; chưa gửi email thật từ môi trường phát triển.
+
+### Chẩn đoán trạng thái Gửi lỗi
+
+Các yêu cầu mới có lỗi email lưu mã/lý do an toàn trong `consultation_email_errors` (bảng tự tạo, không sửa dữ liệu yêu cầu cũ). Admin → Yêu cầu tư vấn hiển thị Lý do và Mã lỗi; API công khai chỉ trả trạng thái chung. Vercel Functions logs ghi mã yêu cầu và mã lỗi, không ghi payload, khóa hoặc phản hồi thô từ Resend. Các lỗi cũ trước bản cập nhật không có thông tin chẩn đoán bổ sung; sau khi deploy hãy gửi một form mới để kiểm tra.
+
+- `invalid_api_key`: thay key đúng trong Production và Redeploy.
+- `resend_test_mode`: `onboarding@resend.dev` chỉ dùng gửi thử cho email chủ tài khoản; xác minh tên miền của mình rồi đặt RESEND_FROM_EMAIL thuộc tên miền đó.
+- `sender_domain`: kiểm tra trạng thái Verified trong Resend Domains và quyền domain của key.
+- `invalid_mail_to` / `email_validation`: kiểm tra địa chỉ MAIL_TO đơn lẻ, địa chỉ gửi và định dạng email.
+- `resend_rate_limit`: kiểm tra quota/tốc độ Resend.
+- `resend_connection` / `resend_http_*`: kiểm tra Resend Logs, tình trạng dịch vụ và kết nối Vercel.
+
+Không có key dịch vụ Production trong môi trường phát triển; các trường hợp trên được kiểm tra bằng HTTP error giả lập. Trạng thái “Đã gửi” chỉ đặt khi Resend trả ID email dạng chuỗi, không tự khẳng định giao đến hộp thư. Yêu cầu tư vấn vẫn được giữ khi gửi lỗi. Sau khi khắc phục cấu hình, thử một yêu cầu mới; gửi lại cùng requestId không tự gửi email lần nữa.

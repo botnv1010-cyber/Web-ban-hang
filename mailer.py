@@ -8,7 +8,31 @@ import urllib.request
 
 
 class MailError(Exception):
-    pass
+    def __init__(self, message, code='send_failed'):
+        super().__init__(message)
+        self.code = code
+
+
+def provider_error(error):
+    # Inspect provider text for classification only; never expose its body or headers.
+    try:
+        body=json.loads(error.read(16384))
+        message=str(body.get('message','')).lower()
+    except (ValueError, OSError, AttributeError):
+        message=''
+    if error.code == 401:
+        return MailError('RESEND_API_KEY không hợp lệ hoặc đã bị thu hồi. Kiểm tra key trong Vercel rồi Redeploy.', 'invalid_api_key')
+    if error.code == 403:
+        if any(word in message for word in ['testing emails', 'your own email', 'test emails']):
+            return MailError('Resend đang ở chế độ thử nghiệm, chỉ gửi được tới email chủ tài khoản. Xác minh tên miền và dùng địa chỉ gửi thuộc tên miền đó.', 'resend_test_mode')
+        if 'domain' in message and any(word in message for word in ['verif', 'not allowed']):
+            return MailError('Tên miền của RESEND_FROM_EMAIL chưa được xác minh hoặc key không có quyền dùng tên miền này. Kiểm tra Domains trong Resend.', 'sender_domain')
+        return MailError('Resend từ chối quyền gửi. Kiểm tra quyền API key, tên miền gửi và giới hạn tài khoản.', 'resend_forbidden')
+    if error.code == 429:
+        return MailError('Resend đang giới hạn tốc độ hoặc hạn mức gửi. Kiểm tra quota trong Resend.', 'resend_rate_limit')
+    if error.code in (400,422):
+        return MailError('Resend từ chối định dạng email. Kiểm tra RESEND_FROM_EMAIL và MAIL_TO trên Vercel.', 'email_validation')
+    return MailError('Dịch vụ email trả lỗi HTTP '+str(error.code)+'. Kiểm tra Resend Logs và thử một yêu cầu mới sau khi khắc phục.', 'resend_http_'+str(error.code))
 
 
 def registration(data, plans):
@@ -45,8 +69,8 @@ def registration(data, plans):
 
 
 def send_registration_email(item):
-    key = os.environ.get('RESEND_API_KEY')
-    sender = os.environ.get('RESEND_FROM_EMAIL')
+    key = (os.environ.get('RESEND_API_KEY') or '').strip()
+    sender = (os.environ.get('RESEND_FROM_EMAIL') or '').strip()
     recipient = item['email']
     if not key or not sender:
         raise MailError('Chức năng gửi email chưa được cấu hình. Vui lòng gọi 0975005123 để được hỗ trợ.')
@@ -55,19 +79,21 @@ def send_registration_email(item):
     owner = os.environ.get('MAIL_TO', '').strip()
     if owner:
         if not re.fullmatch(r'[^\s@<>\r\n,;]+@[^\s@<>\r\n,;]+\.[^\s@<>\r\n,;]+', owner):
-            raise MailError('Địa chỉ nhận thông báo chưa được cấu hình hợp lệ.')
+            raise MailError('MAIL_TO phải là một địa chỉ email, không kèm tên hiển thị hoặc danh sách dấu phẩy.', 'invalid_mail_to')
         if owner.casefold() != recipient.casefold():
             payload['bcc'] = [owner]
     raw = json.dumps(payload, ensure_ascii=False).encode()
     # Provider deduplication prevents a retry of the same submission sending twice.
     fingerprint = hashlib.sha256(raw).hexdigest()
-    req = urllib.request.Request('https://api.resend.com/emails', data=raw, headers={'Authorization': 'Bearer '+key, 'Content-Type': 'application/json', 'Idempotency-Key': 'registration-'+fingerprint}, method='POST')
+    req = urllib.request.Request('https://api.resend.com/emails', data=raw, headers={'Authorization': 'Bearer '+key, 'Content-Type': 'application/json', 'Accept':'application/json', 'User-Agent':'ViettelConsultations/1.0', 'Idempotency-Key': 'registration-'+fingerprint}, method='POST')
     try:
         with urllib.request.urlopen(req, timeout=15) as response:
             result = json.load(response)
-            if response.status not in (200, 201) or not isinstance(result, dict) or not result.get('id'):
+            if response.status not in (200, 201) or not isinstance(result, dict) or not isinstance(result.get('id'),str) or not result['id']:
                 raise ValueError('Invalid provider response')
         return result['id']
+    except urllib.error.HTTPError as error:
+        raise provider_error(error) from None
     except (urllib.error.URLError, TimeoutError, ValueError, OSError):
         # Never expose API keys, provider response bodies or personal data in errors.
-        raise MailError('Chưa xác nhận được kết quả gửi email. Vui lòng thử lại hoặc gọi 0975005123.') from None
+        raise MailError('Không kết nối được Resend hoặc phản hồi không hợp lệ. Kiểm tra trạng thái dịch vụ và kết nối của Vercel.', 'resend_connection') from None
