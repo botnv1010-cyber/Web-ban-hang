@@ -146,6 +146,38 @@ class CatalogTest(unittest.TestCase):
             self.assertIn(b'/admin.js',response.read())
             conn.close()
 
+    def test_service_groups_crud_assignment_and_cache_revision(self):
+        original=self.request('GET','/api/groups')[2]
+        headers=self.login()
+        self.assertEqual(len(original['groups']),6)
+        self.assertEqual(self.request('POST','/api/groups',original)[0],401)
+        self.assertEqual(self.request('POST','/api/groups',original,{'Cookie':headers['Cookie']})[0],403)
+        before=self.request('GET','/api/plans')[2]
+        custom={'id':'mobile-test','name':'Gói di động','description':'Dữ liệu thật','active':True}
+        updated={'groups':[custom]+original['groups'],'version':original['version']}
+        saved=self.request('POST','/api/groups',updated,headers)
+        self.assertEqual(saved[0],200)
+        self.assertEqual(self.request('POST','/api/groups',updated,headers)[0],409)
+        public=self.request('GET','/api/plans')[2]
+        self.assertEqual(public['groups'][0],custom)
+        self.assertEqual(public['version'],before['version']+1)
+        plan={'id':'custom-group-test','category':custom['id'],'name':'Gói 5G','duration':'30 ngày','price':90000,'details':'Internet','active':True}
+        self.assertEqual(self.request('POST','/api/plans',{'plans':public['plans']+[plan],'version':public['version']},headers)[0],200)
+        # Referenced groups cannot be removed, even when hidden.
+        self.assertEqual(self.request('POST','/api/groups',{'groups':original['groups'],'version':saved[2]['version']},headers)[0],400)
+        current=self.request('GET','/api/groups')[2]
+        current['groups'][0]['active']=False
+        self.assertEqual(self.request('POST','/api/groups',current,headers)[0],200)
+        registration={'requestId':'hidden-group-test','name':'Test','email':'test@example.com','phone':'','products':['Gói di động'],'planId':plan['id'],'consent':True}
+        self.assertEqual(self.request('POST','/api/registrations',registration)[0],400)
+        invalid={'groups':[custom,custom],'version':current['version']+1}
+        self.assertEqual(self.request('POST','/api/groups',invalid,headers)[0],400)
+        public=self.request('GET','/api/plans')[2]
+        self.assertEqual(self.request('POST','/api/plans',{'plans':before['plans'],'version':public['version']},headers)[0],200)
+        current=self.request('GET','/api/groups')[2]
+        self.assertEqual(self.request('POST','/api/groups',{'groups':original['groups'],'version':current['version']},headers)[0],200)
+        self.assertEqual(self.request('GET','/api/groups')[2]['groups'],original['groups'])
+
     def test_private_files_and_cross_origin(self):
         for path in ['/.git/config','/server.py','/tests/test_server.py','/assets/../../server.py']:
             self.assertEqual(self.request('GET', path)[0], 404)

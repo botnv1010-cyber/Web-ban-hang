@@ -61,3 +61,5 @@ Máy chủ Python cho phép trình duyệt lưu tài nguyên tĩnh nhưng bắt 
 Xem [bảng phạm vi, cấu hình Neon/Blob/Resend, hướng dẫn Vercel Preview và kết quả kiểm tra](ADMIN-HANDOFF.md). Cấu hình email hiện hành dùng `RESEND_FROM_EMAIL` thay cho `MAIL_FROM`; email gửi đến khách. Yêu cầu được lưu cả khi gửi email lỗi.
 
 Admin mới dùng URL riêng cho từng mục. Xem phần “Admin theo từng trang và cập nhật cache” trong [hướng dẫn bàn giao](ADMIN-HANDOFF.md).
+
+Quản lý nhóm dịch vụ tại `/admin/groups`; ảnh nguồn PNG/JPEG/WebP dưới 10 MB được tối ưu trước khi tải lên. Xem chi tiết trong [hướng dẫn bàn giao](ADMIN-HANDOFF.md).

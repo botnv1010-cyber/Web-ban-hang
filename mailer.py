@@ -30,7 +30,7 @@ def registration(data, plans):
     if data.get('consent') is not True:
         raise ValueError('Vui lòng đồng ý để bộ phận tư vấn liên hệ.')
     products = data.get('products')
-    if not isinstance(products, list) or not 1 <= len(products) <= 6 or any(not isinstance(p, str) or not 1 <= len(p) <= 150 for p in products):
+    if not isinstance(products, list) or not 1 <= len(products) <= 51 or any(not isinstance(p, str) or not 1 <= len(p) <= 150 for p in products):
         raise ValueError('Vui lòng chọn giải pháp cần tư vấn.')
     selected = None
     plan_id = data.get('planId')

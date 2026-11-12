@@ -4,7 +4,7 @@
   "outputDirectory": "public",
   "functions": {
     "api/index.py": {
-      "includeFiles": "{server.py,mailer.py,cms.py,data/*.json}"
+      "includeFiles": "{server.py,mailer.py,cms.py,service_groups.py,data/*.json}"
     }
   },
   "rewrites": [

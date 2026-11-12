@@ -67,7 +67,7 @@ def upload(data):
         with Image.open(io.BytesIO(raw)) as original:
             if original.width*original.height>25000000: raise ValueError()
             image=ImageOps.exif_transpose(original).convert('RGB')
-    except (ValueError, UnidentifiedImageError, Image.DecompressionBombError):
+    except (ValueError, TypeError, OSError, UnidentifiedImageError, Image.DecompressionBombError):
         raise ValueError('Ảnh không hợp lệ; tối đa 2.5 MB và 25 megapixel.') from None
     result={}; prefix=secrets.token_hex(16)
     for kind,width in [('mobile',768),('desktop',1920)]:
@@ -77,6 +77,7 @@ def upload(data):
         try:
             with urllib.request.urlopen(req,timeout=20) as response:
                 result[kind]=json.load(response)['url']
+                if not isinstance(result[kind],str) or not result[kind].startswith('https://'): raise ValueError('Invalid Blob URL')
         except Exception:
             raise ValueError('Không tải ảnh lên Blob được. Kiểm tra cấu hình và kết nối.') from None
     return result

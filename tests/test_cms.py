@@ -22,6 +22,22 @@ class ContentTest(unittest.TestCase):
             server.initialize()
             with server.connect() as db:self.assertEqual(cms.content(db)['content']['hotline'],'0901234567')
 
+    def test_group_initialization_preserves_edits(self):
+        import service_groups
+        with tempfile.TemporaryDirectory() as folder, patch.object(server,'DB',Path(folder)/'test.sqlite'),patch.object(server,'DATABASE_URL',None):
+            server.initialize()
+            with server.connect() as db:
+                data=service_groups.read(db)
+                data['groups'][0]['name']='Nhóm đã sửa'
+                db.execute('UPDATE service_groups SET body=?,version=version+1 WHERE id=1',(json.dumps(data['groups']),))
+            server.initialize()
+            with server.connect() as db:self.assertEqual(service_groups.read(db)['groups'][0]['name'],'Nhóm đã sửa')
+
+    def test_corrupt_image_is_rejected_before_upload(self):
+        with patch.dict(os.environ,{'BLOB_READ_WRITE_TOKEN':'fake-test'}),patch('urllib.request.urlopen') as send:
+            with self.assertRaises(ValueError):cms.upload({'image':base64.b64encode(b'not an image').decode()})
+            send.assert_not_called()
+
     def test_upload_produces_two_valid_webps(self):
         from PIL import Image
         source=io.BytesIO();Image.new('RGB',(2400,1200),'red').save(source,'PNG')

@@ -6,6 +6,7 @@ import json
 import os
 import mailer
 import cms
+import service_groups
 from pathlib import Path
 import secrets
 import sqlite3
@@ -62,6 +63,7 @@ def initialize():
         DB.parent.mkdir(parents=True, exist_ok=True)
     with connect() as db:
         cms.initialize(db)
+        service_groups.initialize(db)
         db.execute('CREATE TABLE IF NOT EXISTS catalog (id INTEGER PRIMARY KEY, body TEXT NOT NULL, version INTEGER NOT NULL)')
         db.execute('CREATE TABLE IF NOT EXISTS admin_sessions (token TEXT PRIMARY KEY, csrf TEXT NOT NULL, expires DOUBLE PRECISION NOT NULL, identity TEXT NOT NULL)')
         db.execute('CREATE TABLE IF NOT EXISTS login_attempts (ip TEXT PRIMARY KEY, started DOUBLE PRECISION NOT NULL, attempts INTEGER NOT NULL)')
@@ -76,7 +78,8 @@ def session_identity():
     return hmac.new(PASSWORD_DIGEST, USERNAME.encode(), hashlib.sha256).hexdigest()
 
 
-def validate(plans):
+def validate(plans, categories=None):
+    categories = CATEGORIES if categories is None else categories
     if not isinstance(plans, list) or len(plans) > 2000:
         raise ValueError('Danh sách tối đa 2000 gói.')
     ids = set()
@@ -86,7 +89,7 @@ def validate(plans):
         for field, maximum in [('id', 100), ('name', 250), ('duration', 200), ('details', 10000)]:
             if not isinstance(p[field], str) or len(p[field]) > maximum:
                 raise ValueError('Nội dung gói quá dài hoặc sai định dạng.')
-        if not p['id'] or p['id'] in ids or not p['name'].strip() or p['category'] not in CATEGORIES:
+        if not p['id'] or p['id'] in ids or not p['name'].strip() or p['category'] not in categories:
             raise ValueError('Mã, tên hoặc nhóm gói không hợp lệ.')
         if type(p['price']) is not int or not 0 <= p['price'] <= 10**12 or type(p['active']) is not bool:
             raise ValueError('Giá hoặc trạng thái gói không hợp lệ.')
@@ -140,6 +143,9 @@ class Handler(SimpleHTTPRequestHandler):
                 content_version=db.execute('SELECT version FROM site_content WHERE id=1').fetchone()[0]
                 plans_version=db.execute('SELECT version FROM catalog WHERE id=1').fetchone()[0]
             self.reply(200, {'content':content_version, 'plans':plans_version}); return
+        if path == '/api/groups':
+            with connect() as db: result=service_groups.read(db)
+            self.reply(200,result); return
         if path == '/api/content':
             with connect() as db: result=cms.content(db)
             self.reply(200,result); return
@@ -151,10 +157,11 @@ class Handler(SimpleHTTPRequestHandler):
         if path == '/api/plans':
             with connect() as db:
                 row = db.execute('SELECT body, version FROM catalog WHERE id=1').fetchone()
+                group_data=service_groups.read(db)
             # Content-derived validators remain correct after database restores too.
-            etag = '"' + hashlib.sha256((str(row[1]) + ':' + row[0]).encode()).hexdigest() + '"'
+            etag = '"' + hashlib.sha256((str(row[1]) + ':' + row[0] + ':' + str(group_data['version'])).encode()).hexdigest() + '"'
             validators = [value.strip().removeprefix('W/') for value in self.headers.get('If-None-Match', '').split(',')]
-            raw = json.dumps({'plans': json.loads(row[0]), 'version': row[1]}, ensure_ascii=False).encode()
+            raw = json.dumps({'plans': json.loads(row[0]), 'version': row[1], 'groups':group_data['groups']}, ensure_ascii=False).encode()
             unchanged = etag in validators or '*' in validators
             self.send_response(304 if unchanged else 200)
             self.send_header('ETag', etag)
@@ -175,7 +182,7 @@ class Handler(SimpleHTTPRequestHandler):
             target = (ROOT / path.lstrip('/')).resolve()
             if path == '/':
                 self.path = '/index.html'
-            elif not target.is_relative_to(ROOT) or any(part.startswith('.') for part in Path(path).parts) or not (path in ['/index.html', '/admin.html', '/admin.js', '/catalog.js', '/admin.css', '/content.js', '/cms-admin.js', '/site-sync.js'] or path.startswith('/assets/') or path == '/data/plans.json') or not target.is_file():
+            elif not target.is_relative_to(ROOT) or any(part.startswith('.') for part in Path(path).parts) or not (path in ['/index.html', '/admin.html', '/admin.js', '/catalog.js', '/admin.css', '/content.js', '/cms-admin.js', '/site-sync.js', '/image-upload.js'] or path.startswith('/assets/') or path == '/data/plans.json') or not target.is_file():
                 self.send_error(404)
                 return
             super().do_GET()
@@ -210,7 +217,8 @@ class Handler(SimpleHTTPRequestHandler):
             try:
                 with connect() as db:
                     row = db.execute('SELECT body FROM catalog WHERE id=1').fetchone()
-                item = mailer.registration(data, json.loads(row[0]))
+                with connect() as db: active_groups={g['id'] for g in service_groups.read(db)['groups'] if g['active']}
+                item = mailer.registration(data, [p for p in json.loads(row[0]) if p['category'] in active_groups])
                 now = time.time()
                 ip = 'registration:' + self.client_address[0]
                 with connect() as db:
@@ -272,6 +280,21 @@ class Handler(SimpleHTTPRequestHandler):
         if not hmac.compare_digest(self.headers.get('X-CSRF-Token', ''), session['csrf']):
             self.reply(403, {'error': 'Vui lòng đăng nhập lại.'})
             return
+        if path == '/api/groups':
+            try:
+                groups=service_groups.validate(data.get('groups'))
+                if type(data.get('version')) is not int: raise ValueError('Phiên bản không hợp lệ.')
+                with connect() as db:
+                    # Serialize group removal with plan assignment in both database backends.
+                    db.execute('UPDATE service_groups SET version=version WHERE id=1')
+                    plans=json.loads(db.execute('SELECT body FROM catalog WHERE id=1').fetchone()[0])
+                    if any(p['category'] not in {g['id'] for g in groups} for p in plans):
+                        raise ValueError('Nhóm còn gói dịch vụ. Chuyển hoặc xóa các gói trước khi xóa nhóm; có thể ẩn nhóm thay thế.')
+                    changed=db.execute('UPDATE service_groups SET body=?,version=version+1 WHERE id=1 AND version=?',(json.dumps(groups,ensure_ascii=False),data['version'])).rowcount
+                    if changed: db.execute('UPDATE catalog SET version=version+1 WHERE id=1')
+                self.reply(200 if changed else 409,{'version':data['version']+1} if changed else {'error':'Nhóm đã thay đổi ở phiên khác. Tải lại trước khi sửa.'})
+            except (ValueError, sqlite3.Error) as e: self.reply(400,{'error':str(e)})
+            return
         if path == '/api/content':
             try:
                 value=cms.validate(data.get('content'))
@@ -296,10 +319,12 @@ class Handler(SimpleHTTPRequestHandler):
             self.reply(200, {}, 'catalog_session=; HttpOnly; SameSite=Strict; Path=/; Max-Age=0')
         elif path == '/api/plans':
             try:
-                plans = validate(data.get('plans'))
+                plans = data.get('plans')
                 if type(data.get('version')) is not int:
                     raise ValueError('Phiên bản danh sách không hợp lệ.')
                 with connect() as db:
+                    db.execute('UPDATE service_groups SET version=version WHERE id=1')
+                    plans=validate(plans,{g['id'] for g in service_groups.read(db)['groups']})
                     changed = db.execute('UPDATE catalog SET body=?, version=version+1 WHERE id=1 AND version=?', (json.dumps(plans, ensure_ascii=False), data.get('version'))).rowcount
                     version = db.execute('SELECT version FROM catalog WHERE id=1').fetchone()[0]
                 if not changed:

@@ -56,3 +56,20 @@ Kiểm chứng bổ sung: **15 unittest đạt**; Chromium kiểm tra mở/tải
 ### Giữ phiên khi chuyển trang admin
 
 Sidebar và bộ chọn trang dùng History API để chuyển nội dung giữa các URL riêng, giữ nguyên tài liệu và CSRF trong phiên. Mở URL trực tiếp hoặc tải lại vẫn gọi `/api/session`; chỉ hiện form đăng nhập sau HTTP 401. Trong thời gian kiểm tra, hiển thị trạng thái chờ; lỗi mạng/503 có nút Thử lại, không giả định rằng phiên đã hết hạn. Cookie HttpOnly vẫn do máy chủ kiểm tra trên mọi API riêng; không lưu token đăng nhập vào localStorage. Browser regression test có kiểm tra giữ nguyên document khi bấm sidebar, phục hồi session chậm và lỗi backend tạm thời.
+
+
+## Quản lý nhóm dịch vụ
+
+Trang `/admin/groups` có trong sidebar: thêm nhóm, sửa tên/mô tả, sắp xếp, bật/tắt và xóa nhóm chưa có gói. Mã nhóm tự tạo, cố định sau khi tạo. Bấm **Lưu nhóm dịch vụ** để áp dụng. Muốn xóa nhóm đang có gói, chuyển hoặc xóa các gói trước; có thể ẩn nhóm để ngừng hiển thị mà giữ dữ liệu.
+
+Nhóm lưu trong bảng `service_groups` trên cùng database Neon/SQLite; sáu nhóm hiện có được khởi tạo một lần, không ghi đè chỉnh sửa. `server.initialize()` và `scripts/init_neon.py` tự tạo bảng này, không cần biến môi trường mới. Khi lưu nhóm, phiên bản catalog tăng trong cùng transaction để vô hiệu hóa cache và kiểm tra xung đột ở form gói đang mở. API `/api/groups` cho phép đọc nhóm; thao tác ghi bắt buộc session và CSRF. Hai thao tác gán gói/xóa nhóm được tuần tự hóa bằng khóa row database để tránh liên kết bị mất.
+
+Dropdown trong quản lý gói và bảng giá dùng nhóm thật. Nhóm mới có thẻ trong hệ sinh thái, tên/mô tả và nút mở bảng giá; nhóm cũ giữ thiết kế thẻ hiện có. Ẩn nhóm ẩn thẻ và các gói trong bảng giá; backend cũng từ chối đăng ký gói thuộc nhóm đã ẩn. Giới hạn tối đa 50 nhóm.
+
+## Ảnh nguồn dưới 10 MB và ảnh xem trước
+
+Admin nhận PNG/JPEG/WebP có dung lượng **dưới 10 MiB** (10 × 1024 × 1024 byte). Ảnh nguồn được đọc và tối ưu trong trình duyệt thành WebP trước khi gửi; payload ảnh tối đa khoảng 2.3 MB để nằm trong giới hạn request của Vercel. Backend kiểm tra ảnh rồi tạo hai bản WebP mobile/desktop lưu Blob như trước. Không tăng payload base64 lên 10 MB vì request sẽ vượt giới hạn Vercel. Không cần cấu hình thêm.
+
+Ảnh `assets/...` trong admin được quy về gốc origin, tránh bị tìm nhầm ở `/admin/content/assets/...`. Preview có thông báo riêng nếu đường dẫn không đọc được. Banner liên kết trực tiếp ảnh cũng cập nhật đích ảnh khi thay nguồn, còn liên kết tùy chỉnh được giữ lại.
+
+Browser test đã kiểm tra nhóm mới → gán gói → chọn gói vào form → ẩn nhóm; preview ảnh thật ở URL admin lồng nhau, file nguồn trên 2 MB tối ưu thành công, giới hạn 10 MB và cache. Blob/Resend trong browser test được giả lập; các kiểm tra database cục bộ dùng SQLite tách biệt. Cần đối chiếu dịch vụ thật sau Vercel deploy.
