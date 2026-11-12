@@ -9,7 +9,7 @@ async function load(){try{const response=await fetch('api/content',{cache:'no-st
  node.hidden=!field.active;
  if(field.tag==='SUMMARY'){node.parentNode.hidden=!field.active;const answer=node.parentNode.querySelector('textarea');if(answer){answer.value=field.answer||'';answer.readOnly=true}}
  if(node.classList.contains('poster-slide')||field.tag==='IMG'&&node.closest('.poster-slide')){const slide=node.closest('.poster-slide');slide.dataset.disabled=String(!field.active);if(field.tag==='IMG')slide.dataset.cmsOrder=field.order;}
- if(field.tag==='IMG'){node.src=field.desktop||field.text;node.alt=field.alt||'';if(field.mobile) {node.srcset=field.mobile+' 768w, '+(field.desktop||field.text)+' 1920w';node.sizes='(max-width: 768px) 100vw, 100vw'}}else if(field.tag==='IFRAME'){if(node.getAttribute('src')!==field.text)node.src=field.text}else if(!field.preserveChildren)node.textContent=field.text;
+ if(field.tag==='IMG'){node.src=field.desktop||field.text;node.alt=field.alt||'';if(!field.mobile){node.removeAttribute('srcset');node.removeAttribute('sizes')}if(field.mobile) {node.srcset=field.mobile+' 768w, '+(field.desktop||field.text)+' 1920w';node.sizes='(max-width: 768px) 100vw, 100vw'}}else if(field.tag==='IFRAME'){if(node.getAttribute('src')!==field.text)node.src=field.text}else if(!field.preserveChildren)node.textContent=field.text;
  if(field.href!==null&&field.href!==undefined&&node.tagName==='A')node.setAttribute('href',field.href);
  node.dataset.cmsOrder=field.order;
  }
@@ -20,5 +20,5 @@ async function load(){try{const response=await fetch('api/content',{cache:'no-st
  document.dispatchEvent(new Event('cms-updated'));
  document.querySelector('footer').textContent=result.content.footer||document.querySelector('footer').textContent;
 }catch{}}
-load();window.addEventListener('focus',load);setInterval(()=>{if(!document.hidden)load()},15000);
+load();window.addEventListener('storage',event=>{if(event.key==='website-content-changed')load()});window.addEventListener('focus',load);setInterval(()=>{if(!document.hidden)load()},15000);
 })();
