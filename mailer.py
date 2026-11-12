@@ -51,6 +51,13 @@ def send_registration_email(item):
     if not key or not sender:
         raise MailError('Chức năng gửi email chưa được cấu hình. Vui lòng gọi 0975005123 để được hỗ trợ.')
     payload = {'from': sender, 'to': [recipient], 'reply_to': item['email'], 'subject': 'Đăng ký gói Viettel Đồng Nai — '+item['request_id'], 'text': item['text']}
+    # A private copy notifies the business without exposing its inbox to customers.
+    owner = os.environ.get('MAIL_TO', '').strip()
+    if owner:
+        if not re.fullmatch(r'[^\s@<>\r\n,;]+@[^\s@<>\r\n,;]+\.[^\s@<>\r\n,;]+', owner):
+            raise MailError('Địa chỉ nhận thông báo chưa được cấu hình hợp lệ.')
+        if owner.casefold() != recipient.casefold():
+            payload['bcc'] = [owner]
     raw = json.dumps(payload, ensure_ascii=False).encode()
     # Provider deduplication prevents a retry of the same submission sending twice.
     fingerprint = hashlib.sha256(raw).hexdigest()

@@ -82,3 +82,10 @@ Trang nhóm có các thẻ tổng số/đang hiển thị/đang ẩn; bảng tr�
 Mỗi nhóm hiển thị tổng số gói, số gói bật/tắt và trạng thái ẩn theo nhóm. **Xem gói** mở `/admin/plans?group=<id>` với bộ lọc tương ứng; thêm gói tại đó tự chọn nhóm này. Bộ lọc được giữ khi tải lại trang. Bấm menu Gói dịch vụ sẽ quay về danh sách không lọc. Nút Xóa bị vô hiệu hóa cho nhóm đang có gói hoặc nhóm cuối cùng; backend vẫn kiểm tra liên kết khi lưu để xử lý trường hợp dữ liệu thay đổi từ phiên khác.
 
 Kiểm thử Chromium bổ sung: tìm kiếm, sửa và giữ cố định mã nhóm, lên/xuống thứ tự, thêm/xóa nhóm trống, khóa xóa nhóm đã có gói, liên kết tới danh sách gói đã lọc, tự điền nhóm khi thêm gói, ẩn nhóm và responsive. Không bổ sung nhóm cha/con hay ảnh nhóm trong đợt này theo lựa chọn hoàn thiện thao tác hiện tại. Không cần cấu hình dịch vụ hoặc migration mới.
+
+
+## Nhận thông báo tư vấn vào email chủ website
+
+Đặt `MAIL_TO` thành một địa chỉ hộp thư của chủ website trong Vercel Environment Variables, cùng `RESEND_API_KEY` và `RESEND_FROM_EMAIL`. `RESEND_FROM_EMAIL` phải thuộc tên miền đã xác minh trong Resend; hộp thư nhận `MAIL_TO` có thể là Gmail/Outlook. Redeploy sau khi thay đổi cấu hình. Bản mới gửi email xác nhận đến khách và **BCC** một bản vào `MAIL_TO`, không hiển thị hộp thư này trong thư khách nhận. Nội dung có tên/số điện thoại/email khách, mã đăng ký, thông tin gói từ database và hotline. Chủ website bấm Reply sẽ trả lời email khách qua reply-to.
+
+Để trống MAIL_TO giữ luồng chỉ gửi xác nhận cho khách. MAIL_TO chỉ nhận một email, không nhập danh sách dấu phẩy hoặc tên hiển thị. Trạng thái/ID trong admin thuộc một yêu cầu Resend gửi cho khách và bản sao BCC; Đã gửi là nhà cung cấp chấp nhận, chưa xác nhận thư đã đến từng hộp thư. Kiểm tra Delivery/Spam trong Resend và hộp thư nhận khi thử dịch vụ thật. Unit test kiểm tra BCC, reply-to, thiếu MAIL_TO và từ chối địa chỉ cấu hình không hợp lệ; chưa gửi email thật từ môi trường phát triển.

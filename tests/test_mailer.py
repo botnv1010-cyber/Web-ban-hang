@@ -93,6 +93,13 @@ class ProviderTest(unittest.TestCase):
             self.assertEqual(first.get_header('Idempotency-key'),second.get_header('Idempotency-key'))
             payload=json.loads(first.data)
             self.assertEqual(payload['to'],['customer@example.com'])
+            self.assertEqual(payload['bcc'],['admin@example.com'])
             self.assertEqual(payload['reply_to'],'customer@example.com')
+        with patch.dict(os.environ,{'RESEND_API_KEY':'test','RESEND_FROM_EMAIL':'sender@example.com','MAIL_TO':''}),patch('urllib.request.urlopen',return_value=context) as send:
+            mailer.send_registration_email(item)
+            self.assertNotIn('bcc',json.loads(send.call_args.args[0].data))
+        with patch.dict(os.environ,{'RESEND_API_KEY':'test','RESEND_FROM_EMAIL':'sender@example.com','MAIL_TO':'bad\r\naddress'}),patch('urllib.request.urlopen') as send:
+            with self.assertRaises(mailer.MailError):mailer.send_registration_email(item)
+            send.assert_not_called()
         with patch.dict(os.environ,{'RESEND_API_KEY':'','RESEND_FROM_EMAIL':''}):
             with self.assertRaises(mailer.MailError):mailer.send_registration_email(item)
