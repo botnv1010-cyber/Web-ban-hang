@@ -60,7 +60,7 @@ Sidebar và bộ chọn trang dùng History API để chuyển nội dung giữa
 
 ## Quản lý nhóm dịch vụ
 
-Trang `/admin/groups` có trong sidebar: thêm nhóm, sửa tên/mô tả, sắp xếp, bật/tắt và xóa nhóm chưa có gói. Mã nhóm tự tạo, cố định sau khi tạo. Bấm **Lưu nhóm dịch vụ** để áp dụng. Muốn xóa nhóm đang có gói, chuyển hoặc xóa các gói trước; có thể ẩn nhóm để ngừng hiển thị mà giữ dữ liệu.
+Trang `/admin/groups` có trong sidebar: thêm nhóm, sửa tên/mô tả, sắp xếp, bật/tắt và xóa nhóm chưa có gói. Mã nhóm tự tạo, cố định sau khi tạo. Danh sách có tìm kiếm theo tên/mã/mô tả, lọc trạng thái và số gói bật/tắt trong từng nhóm. Bấm **Thêm nhóm dịch vụ** hoặc **Sửa** để mở hộp thoại; bấm **Lưu nhóm** áp dụng ngay. Các thao tác ẩn/hiện, đổi thứ tự và xóa cũng lưu trực tiếp, không cần nút lưu chung. Muốn xóa nhóm đang có gói, chuyển hoặc xóa các gói trước; có thể ẩn nhóm để ngừng hiển thị mà giữ dữ liệu.
 
 Nhóm lưu trong bảng `service_groups` trên cùng database Neon/SQLite; sáu nhóm hiện có được khởi tạo một lần, không ghi đè chỉnh sửa. `server.initialize()` và `scripts/init_neon.py` tự tạo bảng này, không cần biến môi trường mới. Khi lưu nhóm, phiên bản catalog tăng trong cùng transaction để vô hiệu hóa cache và kiểm tra xung đột ở form gói đang mở. API `/api/groups` cho phép đọc nhóm; thao tác ghi bắt buộc session và CSRF. Hai thao tác gán gói/xóa nhóm được tuần tự hóa bằng khóa row database để tránh liên kết bị mất.
 
@@ -73,3 +73,12 @@ Admin nhận PNG/JPEG/WebP có dung lượng **dưới 10 MiB** (10 × 1024 × 1
 Ảnh `assets/...` trong admin được quy về gốc origin, tránh bị tìm nhầm ở `/admin/content/assets/...`. Preview có thông báo riêng nếu đường dẫn không đọc được. Banner liên kết trực tiếp ảnh cũng cập nhật đích ảnh khi thay nguồn, còn liên kết tùy chỉnh được giữ lại.
 
 Browser test đã kiểm tra nhóm mới → gán gói → chọn gói vào form → ẩn nhóm; preview ảnh thật ở URL admin lồng nhau, file nguồn trên 2 MB tối ưu thành công, giới hạn 10 MB và cache. Blob/Resend trong browser test được giả lập; các kiểm tra database cục bộ dùng SQLite tách biệt. Cần đối chiếu dịch vụ thật sau Vercel deploy.
+
+
+### Hoàn thiện thao tác quản lý nhóm
+
+Trang nhóm có các thẻ tổng số/đang hiển thị/đang ẩn; bảng trên desktop và danh sách trên điện thoại. Mã nhóm có thể đặt khi tạo và cố định khi sửa. Hộp thoại có kiểm tra trường bắt buộc, mã trùng, độ dài và cảnh báo bỏ thay đổi chưa lưu. Lỗi API/xung đột giữ lại nội dung đang sửa; chỉ cập nhật danh sách và cache sau khi máy chủ lưu thành công.
+
+Mỗi nhóm hiển thị tổng số gói, số gói bật/tắt và trạng thái ẩn theo nhóm. **Xem gói** mở `/admin/plans?group=<id>` với bộ lọc tương ứng; thêm gói tại đó tự chọn nhóm này. Bộ lọc được giữ khi tải lại trang. Bấm menu Gói dịch vụ sẽ quay về danh sách không lọc. Nút Xóa bị vô hiệu hóa cho nhóm đang có gói hoặc nhóm cuối cùng; backend vẫn kiểm tra liên kết khi lưu để xử lý trường hợp dữ liệu thay đổi từ phiên khác.
+
+Kiểm thử Chromium bổ sung: tìm kiếm, sửa và giữ cố định mã nhóm, lên/xuống thứ tự, thêm/xóa nhóm trống, khóa xóa nhóm đã có gói, liên kết tới danh sách gói đã lọc, tự điền nhóm khi thêm gói, ẩn nhóm và responsive. Không bổ sung nhóm cha/con hay ảnh nhóm trong đợt này theo lựa chọn hoàn thiện thao tác hiện tại. Không cần cấu hình dịch vụ hoặc migration mới.
