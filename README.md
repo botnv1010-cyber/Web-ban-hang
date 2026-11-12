@@ -52,10 +52,12 @@ Form gửi đến `/api/registrations`, lưu yêu cầu vào database trước k
 
 Website tải trước danh mục, dùng chung yêu cầu đang tải và lưu danh mục vào localStorage tối đa 24 giờ để mở “Xem chi tiết” ngay. Mỗi lần mở vẫn kiểm tra lại máy chủ ở nền bằng ETag; dữ liệu không đổi trả HTTP 304, không tải lại toàn bộ JSON. Cache không phải nguồn dữ liệu chính: đăng ký luôn xác nhận lại gói hiện hành và máy chủ vẫn kiểm tra giá từ database.
 
-Sau khi admin lưu thành công, cache danh mục cùng trình duyệt được xóa và các tab website cùng origin nhận thông báo cập nhật. Trình duyệt/thiết bị khác kiểm tra khi mở bảng giá, quay lại trang hoặc mỗi 15 giây khi trang đang hiển thị. Đây là cập nhật định kỳ, không phải push tức thời giữa thiết bị. Khi mất mạng, bảng giá đã lưu có thể được hiển thị kèm thông báo; không tiếp tục chọn đăng ký nếu chưa xác nhận được dữ liệu mới. Trình duyệt chặn localStorage vẫn dùng được cache trong bộ nhớ của trang.
+Sau khi admin lưu thành công, cache danh mục cùng trình duyệt được xóa và các tab website cùng origin nhận thông báo cập nhật. Trình duyệt/thiết bị khác kiểm tra khi mở bảng giá, quay lại trang hoặc mỗi 5 giây khi trang đang hiển thị. Đây là cập nhật định kỳ, không phải push tức thời giữa thiết bị. Khi mất mạng, bảng giá đã lưu có thể được hiển thị kèm thông báo; không tiếp tục chọn đăng ký nếu chưa xác nhận được dữ liệu mới. Trình duyệt chặn localStorage vẫn dùng được cache trong bộ nhớ của trang.
 
 Máy chủ Python cho phép trình duyệt lưu tài nguyên tĩnh nhưng bắt buộc xác thực lại trước khi tái sử dụng. Các API tài khoản và phản hồi lưu dữ liệu vẫn dùng `no-store`. Luồng admin cần máy chủ Python hoặc Vercel có PostgreSQL; bản GitHub Pages tĩnh chỉ dùng danh mục JSON ban đầu.
 
 ## Quản trị nội dung và yêu cầu tư vấn
 
 Xem [bảng phạm vi, cấu hình Neon/Blob/Resend, hướng dẫn Vercel Preview và kết quả kiểm tra](ADMIN-HANDOFF.md). Cấu hình email hiện hành dùng `RESEND_FROM_EMAIL` thay cho `MAIL_FROM`; email gửi đến khách. Yêu cầu được lưu cả khi gửi email lỗi.
+
+Admin mới dùng URL riêng cho từng mục. Xem phần “Admin theo từng trang và cập nhật cache” trong [hướng dẫn bàn giao](ADMIN-HANDOFF.md).

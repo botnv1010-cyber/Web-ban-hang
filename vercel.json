@@ -10,11 +10,35 @@
   "rewrites": [
     {
       "source": "/admin",
-      "destination": "/api/index?route=admin"
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "/admin.html"
     },
     {
       "source": "/api/:route*",
       "destination": "/api/index?route=:route*"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/admin/:path*",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/api/:path*",
+      "headers": [
+        {
+          "key": "CDN-Cache-Control",
+          "value": "no-store"
+        }
+      ]
     }
   ]
 }

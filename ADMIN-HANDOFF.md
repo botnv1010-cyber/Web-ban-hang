@@ -40,3 +40,14 @@ Form giữ yêu cầu sau mọi kết quả gửi. `Chưa cấu hình email` khi
 - Chromium cục bộ: lưu và tải lại trường nội dung của cả 9 mục có nội dung chữ, kiểm tra binding ảnh responsive; đăng nhập qua `/admin`; sửa hotline/footer, tải lại khách thấy dữ liệu mới; API inbox chưa đăng nhập trả 401; gửi yêu cầu không có phone; xem inbox và đổi trạng thái.
 - Kiểm tra cú pháp Python/JS và build tĩnh.
 - **Chưa xác thực dịch vụ thật**: không có DATABASE_URL/Blob token/Resend key trong môi trường này. Chưa chạy migration trên Neon, upload Blob thật, nhận email thật hoặc dựng Vercel Preview có protection. Cần hoàn tất các bước cấu hình trên rồi kiểm tra lại toàn bộ bảng, đặc biệt carousel WebP và video trên thiết bị thật. Không khẳng định các mục chưa thử là đã đạt.
+
+
+## Admin theo từng trang và cập nhật cache
+
+- `/admin` chuyển đến `/admin/plans` sau đăng nhập. Mỗi mục có URL riêng: `/admin/plans`, `/admin/settings`, `/admin/consultations`, `/admin/content/section-0` … `/admin/content/section-9`. Mở trực tiếp/tải lại vẫn yêu cầu session; HTML là shell đăng nhập, API dữ liệu riêng kiểm tra quyền trên máy chủ.
+- Desktop có sidebar; điện thoại có danh sách chọn trang. Nội dung là các thẻ thu gọn, có tìm kiếm, xem trước ảnh và thanh Lưu cố định. Banner gộp ảnh và liên kết trong một thẻ. Cảnh báo khi rời trang còn thay đổi chưa lưu.
+- Mỗi lần API lưu thành công (gói, nội dung, trạng thái yêu cầu) gửi thông báo BroadcastChannel/localStorage theo loại dữ liệu. Không thông báo cho upload chưa áp dụng hoặc lưu thất bại. Gói bị xóa cache localStorage ngay cả khi chưa có tab khách mở. Nội dung chỉ áp dụng lại các section có dữ liệu khác, tránh tải lại ảnh/video không đổi. Ảnh upload được lưu bằng URL mới, không ghi đè ảnh đã cache.
+- Trình duyệt khác thăm dò `/api/revisions` mỗi **5 giây khi trang hiển thị** và khi quay lại tab; chỉ tải danh mục/nội dung khi phiên bản đổi. Đây là cơ chế phát hiện định kỳ, không phải push giữa thiết bị. Nếu mất mạng/tab bị treo thì dữ liệu cập nhật sau khi kết nối/hoạt động lại. API revisions và dữ liệu nội dung không lưu cache; API gói xác thực ETag trước khi tái sử dụng. Không cache dữ liệu riêng của inbox.
+- Lưu nhiều mục ở hai phiên đồng thời vẫn kiểm tra version, trả 409 cho bản sửa cũ thay vì ghi đè dữ liệu mới.
+
+Kiểm chứng bổ sung: **15 unittest đạt**; Chromium kiểm tra mở/tải lại các URL admin, cập nhật nội dung ở cùng browser và context độc lập, làm mới bảng giá đang mở, tự lưu banner (Blob giả lập), responsive và đăng xuất. Có thể chạy lại browser test với Playwright + Chromium đã cài: `PYTHON=python3 CHROMIUM_PATH=/usr/bin/chromium node tests/admin_browser.cjs`. Bài test tự tạo mật khẩu, database tạm và server ở port rảnh, không dùng database Production. Dịch vụ Neon/Blob/Resend thật và cấu hình Vercel Production vẫn cần kiểm tra ở môi trường triển khai.

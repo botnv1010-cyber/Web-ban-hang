@@ -132,10 +132,14 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = urlsplit(self.path).path
-        if path in ['/admin','/admin/']:
-            if not self.session():
-                self.send_response(302); self.send_header('Location','/admin.html'); self.end_headers(); return
-            self.send_response(302); self.send_header('Location','/admin.html'); self.end_headers(); return
+        if path == '/admin' or path.startswith('/admin/'):
+            self.path='/admin.html'
+            super().do_GET(); return
+        if path == '/api/revisions':
+            with connect() as db:
+                content_version=db.execute('SELECT version FROM site_content WHERE id=1').fetchone()[0]
+                plans_version=db.execute('SELECT version FROM catalog WHERE id=1').fetchone()[0]
+            self.reply(200, {'content':content_version, 'plans':plans_version}); return
         if path == '/api/content':
             with connect() as db: result=cms.content(db)
             self.reply(200,result); return
@@ -171,7 +175,7 @@ class Handler(SimpleHTTPRequestHandler):
             target = (ROOT / path.lstrip('/')).resolve()
             if path == '/':
                 self.path = '/index.html'
-            elif not target.is_relative_to(ROOT) or any(part.startswith('.') for part in Path(path).parts) or not (path in ['/index.html', '/admin.html', '/admin.js', '/catalog.js', '/admin.css', '/content.js', '/cms-admin.js'] or path.startswith('/assets/') or path == '/data/plans.json') or not target.is_file():
+            elif not target.is_relative_to(ROOT) or any(part.startswith('.') for part in Path(path).parts) or not (path in ['/index.html', '/admin.html', '/admin.js', '/catalog.js', '/admin.css', '/content.js', '/cms-admin.js', '/site-sync.js'] or path.startswith('/assets/') or path == '/data/plans.json') or not target.is_file():
                 self.send_error(404)
                 return
             super().do_GET()

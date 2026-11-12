@@ -46,7 +46,7 @@ def validate(value):
             if f.get('templateId') is not None and (type(f['templateId']) is not int or not 0<=f['templateId']<50000): raise ValueError('Mẫu không hợp lệ.')
             if type(f.get('active')) is not bool or type(f.get('order')) is not int or not isinstance(f.get('text'), str) or len(f['text']) > 10000:
                 raise ValueError('Nội dung quá dài hoặc sai kiểu.')
-            for key in ['href','mobile','desktop']:
+            for key in ['href','link','mobile','desktop']:
                 url=f.get(key)
                 if url and (not isinstance(url,str) or not url.startswith(('https://','http://','/','#','tel:','mailto:','assets/'))):
                     raise ValueError('Liên kết không hợp lệ.')

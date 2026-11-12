@@ -123,6 +123,29 @@ class CatalogTest(unittest.TestCase):
         restored={**original,'version':original['version']+1}
         self.assertEqual(self.request('POST','/api/content',restored,headers)[0],200)
 
+    def test_revisions_follow_committed_changes(self):
+        before=self.request('GET','/api/revisions')[2]
+        original=self.request('GET','/api/content')[2]
+        headers=self.login()
+        changed=json.loads(json.dumps(original))
+        changed['content']['footer']='Footer revision test'
+        self.assertEqual(self.request('POST','/api/content',changed,headers)[0],200)
+        after=self.request('GET','/api/revisions')[2]
+        self.assertEqual(after['content'],before['content']+1)
+        self.assertEqual(after['plans'],before['plans'])
+        # Rejected writes must not invalidate data.
+        self.assertEqual(self.request('POST','/api/content',changed,headers)[0],409)
+        self.assertEqual(self.request('GET','/api/revisions')[2],after)
+        original['version']+=1
+        self.assertEqual(self.request('POST','/api/content',original,headers)[0],200)
+        for path in ['/admin/plans','/admin/settings','/admin/content/section-1','/admin/consultations']:
+            conn=http.client.HTTPConnection('127.0.0.1',self.port,timeout=5)
+            conn.request('GET',path)
+            response=conn.getresponse()
+            self.assertEqual(response.status,200)
+            self.assertIn(b'/admin.js',response.read())
+            conn.close()
+
     def test_private_files_and_cross_origin(self):
         for path in ['/.git/config','/server.py','/tests/test_server.py','/assets/../../server.py']:
             self.assertEqual(self.request('GET', path)[0], 404)
