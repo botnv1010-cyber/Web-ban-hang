@@ -107,6 +107,22 @@ class CatalogTest(unittest.TestCase):
         restored = self.request('POST', '/api/plans', {'plans': original['plans'], 'version': saved[2]['version']}, headers)
         self.assertEqual(restored[0], 200)
 
+    def test_content_and_inbox_require_admin_and_csrf(self):
+        self.assertEqual(self.request('GET','/api/consultations')[0],401)
+        self.assertEqual(self.request('POST','/api/content',{})[0],401)
+        self.assertEqual(self.request('POST','/api/upload',{})[0],401)
+        headers=self.login()
+        self.assertEqual(self.request('GET','/api/consultations',headers=headers)[0],200)
+        original=self.request('GET','/api/content')[2]
+        changed=json.loads(json.dumps(original))
+        changed['content']['hotline']='0901234567'
+        self.assertEqual(self.request('POST','/api/content',changed,{'Cookie':headers['Cookie']})[0],403)
+        self.assertEqual(self.request('POST','/api/content',changed,headers)[0],200)
+        self.assertEqual(self.request('GET','/api/content')[2]['content']['hotline'],'0901234567')
+        self.assertEqual(self.request('POST','/api/content',changed,headers)[0],409)
+        restored={**original,'version':original['version']+1}
+        self.assertEqual(self.request('POST','/api/content',restored,headers)[0],200)
+
     def test_private_files_and_cross_origin(self):
         for path in ['/.git/config','/server.py','/tests/test_server.py','/assets/../../server.py']:
             self.assertEqual(self.request('GET', path)[0], 404)

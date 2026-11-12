@@ -18,12 +18,12 @@ def registration(data, plans):
             raise ValueError('Vui lòng kiểm tra thông tin đăng ký.')
         return value.strip()
     name = text('name', 100)
-    phone = text('phone', 20)
+    phone = text('phone', 20, False)
     email = text('email', 200)
     request_id = text('requestId', 100)
     if not re.fullmatch(r'[A-Za-z0-9_-]{8,100}', request_id):
         raise ValueError('Mã đăng ký không hợp lệ.')
-    if not re.fullmatch(r'[+0-9 ()-]{9,20}', phone) or len(re.sub(r'\D', '', phone)) < 9:
+    if phone and (not re.fullmatch(r'[+0-9 ()-]{9,20}', phone) or len(re.sub(r'\D', '', phone)) < 9):
         raise ValueError('Số điện thoại không hợp lệ.')
     if not re.fullmatch(r'[^\s@<>\r\n]+@[^\s@<>\r\n]+\.[^\s@<>\r\n]+', email):
         raise ValueError('Email không hợp lệ.')
@@ -46,8 +46,8 @@ def registration(data, plans):
 
 def send_registration_email(item):
     key = os.environ.get('RESEND_API_KEY')
-    sender = os.environ.get('MAIL_FROM')
-    recipient = os.environ.get('MAIL_TO', 'botnv1010@gmail.com')
+    sender = os.environ.get('RESEND_FROM_EMAIL')
+    recipient = item['email']
     if not key or not sender:
         raise MailError('Chức năng gửi email chưa được cấu hình. Vui lòng gọi 0975005123 để được hỗ trợ.')
     payload = {'from': sender, 'to': [recipient], 'reply_to': item['email'], 'subject': 'Đăng ký gói Viettel Đồng Nai — '+item['request_id'], 'text': item['text']}
@@ -60,6 +60,7 @@ def send_registration_email(item):
             result = json.load(response)
             if response.status not in (200, 201) or not isinstance(result, dict) or not result.get('id'):
                 raise ValueError('Invalid provider response')
+        return result['id']
     except (urllib.error.URLError, TimeoutError, ValueError, OSError):
         # Never expose API keys, provider response bodies or personal data in errors.
         raise MailError('Chưa xác nhận được kết quả gửi email. Vui lòng thử lại hoặc gọi 0975005123.') from None

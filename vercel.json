@@ -4,10 +4,17 @@
   "outputDirectory": "public",
   "functions": {
     "api/index.py": {
-      "includeFiles": "{server.py,mailer.py,data/plans.json}"
+      "includeFiles": "{server.py,mailer.py,cms.py,data/*.json}"
     }
   },
   "rewrites": [
-    { "source": "/api/:route*", "destination": "/api/index?route=:route*" }
+    {
+      "source": "/admin",
+      "destination": "/api/index?route=admin"
+    },
+    {
+      "source": "/api/:route*",
+      "destination": "/api/index?route=:route*"
+    }
   ]
 }

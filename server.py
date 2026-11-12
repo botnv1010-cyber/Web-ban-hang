@@ -5,6 +5,7 @@ import hmac
 import json
 import os
 import mailer
+import cms
 from pathlib import Path
 import secrets
 import sqlite3
@@ -60,6 +61,7 @@ def initialize():
     if not DATABASE_URL:
         DB.parent.mkdir(parents=True, exist_ok=True)
     with connect() as db:
+        cms.initialize(db)
         db.execute('CREATE TABLE IF NOT EXISTS catalog (id INTEGER PRIMARY KEY, body TEXT NOT NULL, version INTEGER NOT NULL)')
         db.execute('CREATE TABLE IF NOT EXISTS admin_sessions (token TEXT PRIMARY KEY, csrf TEXT NOT NULL, expires DOUBLE PRECISION NOT NULL, identity TEXT NOT NULL)')
         db.execute('CREATE TABLE IF NOT EXISTS login_attempts (ip TEXT PRIMARY KEY, started DOUBLE PRECISION NOT NULL, attempts INTEGER NOT NULL)')
@@ -130,6 +132,18 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         path = urlsplit(self.path).path
+        if path in ['/admin','/admin/']:
+            if not self.session():
+                self.send_response(302); self.send_header('Location','/admin.html'); self.end_headers(); return
+            self.send_response(302); self.send_header('Location','/admin.html'); self.end_headers(); return
+        if path == '/api/content':
+            with connect() as db: result=cms.content(db)
+            self.reply(200,result); return
+        if path == '/api/consultations':
+            if not self.session(): self.reply(401,{'error':'Vui lòng đăng nhập.'}); return
+            with connect() as db:
+                rows=db.execute('SELECT id, body, status, email_status, email_id, created FROM consultations ORDER BY created DESC LIMIT 500').fetchall()
+            self.reply(200,{'requests':[dict(id=r[0],data=json.loads(r[1]),status=r[2],emailStatus=r[3],emailId=r[4],created=r[5]) for r in rows]}); return
         if path == '/api/plans':
             with connect() as db:
                 row = db.execute('SELECT body, version FROM catalog WHERE id=1').fetchone()
@@ -157,7 +171,7 @@ class Handler(SimpleHTTPRequestHandler):
             target = (ROOT / path.lstrip('/')).resolve()
             if path == '/':
                 self.path = '/index.html'
-            elif not target.is_relative_to(ROOT) or any(part.startswith('.') for part in Path(path).parts) or not (path in ['/index.html', '/admin.html', '/admin.js', '/catalog.js', '/admin.css'] or path.startswith('/assets/') or path == '/data/plans.json') or not target.is_file():
+            elif not target.is_relative_to(ROOT) or any(part.startswith('.') for part in Path(path).parts) or not (path in ['/index.html', '/admin.html', '/admin.js', '/catalog.js', '/admin.css', '/content.js', '/cms-admin.js'] or path.startswith('/assets/') or path == '/data/plans.json') or not target.is_file():
                 self.send_error(404)
                 return
             super().do_GET()
@@ -176,7 +190,7 @@ class Handler(SimpleHTTPRequestHandler):
             return
         try:
             length = int(self.headers.get('Content-Length', '0'))
-            if not 0 < length <= 3_000_000:
+            if not 0 < length <= 3_500_000:
                 raise ValueError('Yêu cầu quá lớn hoặc trống.')
             data = json.loads(self.rfile.read(length))
             if not isinstance(data, dict):
@@ -201,8 +215,24 @@ class Handler(SimpleHTTPRequestHandler):
                 if count > 5:
                     self.reply(429, {'error': 'Bạn đã gửi nhiều đăng ký. Vui lòng thử lại sau 5 phút.'})
                     return
-                mailer.send_registration_email(item)
-                self.reply(200, {'success': True, 'requestId': item['request_id']})
+                with connect() as db:
+                    hotline=cms.content(db)['content']['hotline']
+                    existing=db.execute('SELECT body, email_status, email_id FROM consultations WHERE id=?',(item['request_id'],)).fetchone()
+                    if existing:
+                        if json.loads(existing[0]) != data: raise ValueError('Mã yêu cầu đã được sử dụng.')
+                        self.reply(200, {'success':True,'requestId':item['request_id'],'emailStatus':existing[1]}); return
+                    db.execute('INSERT INTO consultations VALUES (?, ?, ?, ?, ?, ?)',(item['request_id'],json.dumps(data,ensure_ascii=False),'Mới','Chưa cấu hình email','',time.time()))
+                item['text'] += '\nHotline: '+hotline
+                email_status='Chưa cấu hình email'; email_id=''
+                if os.environ.get('RESEND_API_KEY') and os.environ.get('RESEND_FROM_EMAIL'):
+                    try:
+                        email_id=mailer.send_registration_email(item)
+                        if not isinstance(email_id,str) or not email_id: raise mailer.MailError('Invalid email ID')
+                        email_status='Đã gửi'
+                    except mailer.MailError: email_status='Gửi lỗi'
+                with connect() as db:
+                    db.execute('UPDATE consultations SET email_status=?, email_id=? WHERE id=?',(email_status,email_id,item['request_id']))
+                self.reply(200, {'success': True, 'requestId': item['request_id'], 'emailStatus':email_status})
             except ValueError as error:
                 self.reply(400, {'error': str(error)})
             except mailer.MailError as error:
@@ -238,6 +268,23 @@ class Handler(SimpleHTTPRequestHandler):
         if not hmac.compare_digest(self.headers.get('X-CSRF-Token', ''), session['csrf']):
             self.reply(403, {'error': 'Vui lòng đăng nhập lại.'})
             return
+        if path == '/api/content':
+            try:
+                value=cms.validate(data.get('content'))
+                with connect() as db:
+                    changed=db.execute('UPDATE site_content SET body=?, version=version+1 WHERE id=1 AND version=?',(json.dumps(value,ensure_ascii=False),data.get('version'))).rowcount
+                self.reply(200 if changed else 409, {'success':True} if changed else {'error':'Nội dung đã thay đổi. Tải lại trước khi sửa.'})
+            except ValueError as e: self.reply(400,{'error':str(e)})
+            return
+        if path == '/api/upload':
+            try: self.reply(200,cms.upload(data))
+            except ValueError as e: self.reply(400,{'error':str(e)})
+            return
+        if path == '/api/consultations':
+            if data.get('status') not in ['Mới','Đang xử lý','Hoàn tất','Hủy']:
+                self.reply(400,{'error':'Trạng thái không hợp lệ.'}); return
+            with connect() as db: changed=db.execute('UPDATE consultations SET status=? WHERE id=?',(data['status'],data.get('id'))).rowcount
+            self.reply(200 if changed else 404,{'success':bool(changed)}); return
         if path == '/api/logout':
             cookie = SimpleCookie(self.headers.get('Cookie', ''))
             with connect() as db:

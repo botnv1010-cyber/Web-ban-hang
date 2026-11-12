@@ -44,19 +44,9 @@ Kho mã có `vercel.json`, hàm Python `api/index.py` và bước build chỉ xu
 
 Ứng dụng tự tạo các bảng cần thiết và nạp 111 gói ban đầu khi cơ sở dữ liệu còn trống. Catalog, phiên đăng nhập và bộ đếm giới hạn đăng nhập đều lưu trong PostgreSQL dùng chung giữa các Functions. Đổi mật khẩu/tên đăng nhập sẽ vô hiệu hóa các phiên cũ. Không dùng cùng cơ sở dữ liệu Production cho Preview nếu không muốn bản Preview thay đổi bảng giá thật.
 
-## Email thông báo khi khách đăng ký
+## Yêu cầu tư vấn và email xác nhận
 
-Form tư vấn và form chọn gói gửi đến `/api/registrations`. Máy chủ kiểm tra thông tin liên hệ, đồng ý liên hệ và gói đang hiển thị; lấy tên, giá, thời hạn và chi tiết gói trực tiếp từ database rồi gửi email thông báo cho bộ phận tư vấn. Khách chưa nhận email xác nhận riêng.
-
-Trong Resend, xác minh tên miền gửi email bằng các bản ghi DNS theo hướng dẫn dịch vụ, rồi tạo API key cho phép gửi email. Trong Vercel → Settings → Environment Variables (Production), thêm:
-
-- `RESEND_API_KEY` — Secret, API key Resend.
-- `MAIL_FROM` — địa chỉ gửi thuộc tên miền đã xác minh, ví dụ `Viettel Đồng Nai <thongbao@tenmien-cua-ban.vn>`; thay bằng địa chỉ thật. Không sử dụng địa chỉ Gmail làm người gửi khi tên miền đó không thuộc quyền quản lý của bạn.
-- `MAIL_TO` — địa chỉ nhận thông báo; mặc định `botnv1010@gmail.com`, thay nếu cần.
-
-Chọn Redeploy sau khi thêm các biến. Cần giữ các biến PostgreSQL và tài khoản quản trị đã cấu hình. Các key và thông tin xác thực chỉ nằm phía máy chủ, không đưa vào Git hoặc mã JavaScript.
-
-Luồng gửi dùng reply-to là email của khách để tư vấn viên trả lời trực tiếp. Chỉ hiển thị thành công khi nhà cung cấp email xác nhận đã nhận yêu cầu; điều này chưa bảo đảm thư đến hộp thư chính. Kiểm tra trạng thái thư trong Resend nếu thư không đến. Khi dịch vụ lỗi hoặc chưa cấu hình, form báo lỗi và không hiện thông báo thành công. Giới hạn 5 yêu cầu hợp lệ mỗi IP trong 5 phút và dùng khóa idempotency của nhà cung cấp để tránh gửi trùng khi thử lại cùng đăng ký (theo thời hạn của Resend).
+Form gửi đến `/api/registrations`, lưu yêu cầu vào database trước khi gửi email đến khách qua Resend. Số điện thoại tùy chọn; email và đồng ý liên hệ bắt buộc. Dùng `RESEND_API_KEY` và `RESEND_FROM_EMAIL` ở backend. Inbox quản trị hiển thị mã yêu cầu, trạng thái xử lý, trạng thái email và ID provider. Lỗi hoặc thiếu cấu hình email không làm mất yêu cầu đã lưu. Xem [hướng dẫn bàn giao](ADMIN-HANDOFF.md).
 
 ## Bộ nhớ đệm bảng giá
 
@@ -65,3 +55,7 @@ Website tải trước danh mục, dùng chung yêu cầu đang tải và lưu d
 Sau khi admin lưu thành công, cache danh mục cùng trình duyệt được xóa và các tab website cùng origin nhận thông báo cập nhật. Trình duyệt/thiết bị khác kiểm tra khi mở bảng giá, quay lại trang hoặc mỗi 15 giây khi trang đang hiển thị. Đây là cập nhật định kỳ, không phải push tức thời giữa thiết bị. Khi mất mạng, bảng giá đã lưu có thể được hiển thị kèm thông báo; không tiếp tục chọn đăng ký nếu chưa xác nhận được dữ liệu mới. Trình duyệt chặn localStorage vẫn dùng được cache trong bộ nhớ của trang.
 
 Máy chủ Python cho phép trình duyệt lưu tài nguyên tĩnh nhưng bắt buộc xác thực lại trước khi tái sử dụng. Các API tài khoản và phản hồi lưu dữ liệu vẫn dùng `no-store`. Luồng admin cần máy chủ Python hoặc Vercel có PostgreSQL; bản GitHub Pages tĩnh chỉ dùng danh mục JSON ban đầu.
+
+## Quản trị nội dung và yêu cầu tư vấn
+
+Xem [bảng phạm vi, cấu hình Neon/Blob/Resend, hướng dẫn Vercel Preview và kết quả kiểm tra](ADMIN-HANDOFF.md). Cấu hình email hiện hành dùng `RESEND_FROM_EMAIL` thay cho `MAIL_FROM`; email gửi đến khách. Yêu cầu được lưu cả khi gửi email lỗi.

@@ -29,7 +29,9 @@ class handler(server.Handler):
             os.environ['COOKIE_SECURE'] = '1'
             # Use only Vercel's platform-provided client IP for shared throttling.
             self.client_address = (self.headers.get('x-vercel-forwarded-for', self.client_address[0]).split(',')[0].strip(), 0)
-            if not urlsplit(self.path).path.startswith('/api/'):
+            if self.path == '/api/admin':
+                self.path='/admin'
+            if self.path != '/admin' and not urlsplit(self.path).path.startswith('/api/'):
                 self.reply(404, {'error': 'Không tìm thấy API.'})
                 return
             method(self)

@@ -42,7 +42,7 @@ class RegistrationTest(unittest.TestCase):
         return status,body
 
     def test_selected_package_and_provider_success(self):
-        with patch('mailer.send_registration_email') as send:
+        with patch.dict(os.environ,{'RESEND_API_KEY':'test','RESEND_FROM_EMAIL':'sender@example.com'}), patch('mailer.send_registration_email',return_value='email-id') as send:
             status,result=self.post({**self.data,'price':1,'details':'fake price'})
             self.assertEqual(status,200)
             self.assertTrue(result['success'])
@@ -51,11 +51,14 @@ class RegistrationTest(unittest.TestCase):
             self.assertIn('Khách kiểm thử',text)
             self.assertNotIn('fake price',text)
 
-    def test_failure_never_claims_success(self):
-        with patch('mailer.send_registration_email',side_effect=mailer.MailError('Không gửi được email.')):
+    def test_failure_preserves_request(self):
+        with patch.dict(os.environ,{'RESEND_API_KEY':'test','RESEND_FROM_EMAIL':'sender@example.com'}), patch('mailer.send_registration_email',side_effect=mailer.MailError('Không gửi được email.')):
             status,result=self.post(self.data)
-            self.assertEqual(status,503)
-            self.assertNotIn('success',result)
+            self.assertEqual(status,200)
+            self.assertTrue(result['success'])
+            self.assertEqual(result['emailStatus'],'Gửi lỗi')
+            with server.connect() as db:
+                self.assertEqual(db.execute('SELECT email_status FROM consultations').fetchone()[0],'Gửi lỗi')
 
     def test_invalid_and_hidden_packages_do_not_send(self):
         with patch('mailer.send_registration_email') as send:
@@ -83,13 +86,13 @@ class ProviderTest(unittest.TestCase):
         response.read.return_value=b'{"id":"provider-message-id"}'
         context=MagicMock()
         context.__enter__.return_value=response
-        with patch.dict(os.environ,{'RESEND_API_KEY':'test-not-a-real-key','MAIL_FROM':'sender@example.com','MAIL_TO':'admin@example.com'}),patch('urllib.request.urlopen',return_value=context) as send:
+        with patch.dict(os.environ,{'RESEND_API_KEY':'test-not-a-real-key','RESEND_FROM_EMAIL':'sender@example.com','MAIL_TO':'admin@example.com'}),patch('urllib.request.urlopen',return_value=context) as send:
             mailer.send_registration_email(item)
             mailer.send_registration_email(item)
             first, second=[call.args[0] for call in send.call_args_list]
             self.assertEqual(first.get_header('Idempotency-key'),second.get_header('Idempotency-key'))
             payload=json.loads(first.data)
-            self.assertEqual(payload['to'],['admin@example.com'])
+            self.assertEqual(payload['to'],['customer@example.com'])
             self.assertEqual(payload['reply_to'],'customer@example.com')
-        with patch.dict(os.environ,{'RESEND_API_KEY':'','MAIL_FROM':''}):
+        with patch.dict(os.environ,{'RESEND_API_KEY':'','RESEND_FROM_EMAIL':''}):
             with self.assertRaises(mailer.MailError):mailer.send_registration_email(item)
